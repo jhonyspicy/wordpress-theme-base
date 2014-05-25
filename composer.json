@@ -3,9 +3,12 @@
 	"keywords": ["wordpress", "theme"],
 	"license":  "LGPLv3",
 	"version":  "0.0.1",
+	"require": {
+		"php": ">=5.3.3"
+	},
 	"description": "This makes easier to make WordPress theme",
 	"autoload": {
-		"classmap": ["src", "src/"]
+		"classmap": ["src", "src/JhonySpicy/WordPress/ThemeBase/"]
 	},
 	"author":   {
 		"name": "Jhony Spicy"
