@@ -1,0 +1,12 @@
+{
+	"name": "jhonyspicy/wordpress-theme-base",
+	"keywords": ["wordpress", "theme"],
+	"license": "LGPLv3",
+	"version": "0.0.1",
+	"autoload": {
+		"classmap": ["src", "src/"]
+	},
+	"author": {
+		"name" : "	Jhony Spicy"
+	}
+}
