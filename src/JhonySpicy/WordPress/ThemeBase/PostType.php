@@ -212,6 +212,14 @@ abstract class PostType {
 	}
 
 	/**
+	 * 主に「Post」と「Page」で使う予定。
+	 * 必要・不要となるサポートを追加・削除するときは
+	 * これをオーバーライドしてください。
+	 */
+	public function post_type_support() {
+	}
+
+	/**
 	 * このポストタイプにWordPressの機能を追加する
 	 * 'title'
 	 * 'editor' (content)
@@ -270,13 +278,5 @@ abstract class PostType {
 	 */
 	public function admin_head() {
 		add_editor_style('css/admin/'. $this->name() .'/editor.css');
-	}
-
-	/**
-	 * 主に「Post」と「Page」で使う予定。
-	 * 必要・不要となるサポートを追加・削除するときは
-	 * これをオーバーライドしてください。
-	 */
-	public function post_type_support() {
 	}
 }
