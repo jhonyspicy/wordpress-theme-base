@@ -1,6 +1,5 @@
 <?php
-
-namespace Jhonyspicy\Wordpress\ThemeBase;
+namespace Jhonyspicy\Wordpress\Theme\Base;
 
 class Base {
 	/**
@@ -57,16 +56,8 @@ class Base {
 		add_action('current_screen', function () {
 			if (array_key_exists('PostType', self::$classes)) {
 				foreach(self::$classes['PostType'] as $postType) {
-					add_action('init', array($postType, 'register_post_type'));
-
 					if ($postType->is_self()) {
-						add_action('edit_form_after_title', array($postType, 'edit_form_after_title')); //タイトルの下に何かを追加
-						add_action('admin_print_scripts', array($postType, 'admin_print_scripts')); //必要となるスクリプトを読み込む
-						add_action('admin_print_styles', array($postType, 'admin_print_styles')); //必要となるスタイルを読み込む
-						add_action('admin_head', array($postType, 'admin_head')); //ビジュアルエディタのスタイルを読み込む
-						add_action('add_meta_boxes', array($postType, 'add_meta_boxes')); //カスタムフィールド
-						add_action('save_post', array($postType, 'save_post')); //カスタムフィールドの保存
-						$postType->post_type_support();
+						$postType->add_hooks();
 					}
 				}
 			}

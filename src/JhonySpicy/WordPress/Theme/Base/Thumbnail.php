@@ -1,4 +1,5 @@
 <?php
+namespace Jhonyspicy\Wordpress\Theme\Base;
 class Thumbnail {
 	static $size_list = array('_large' => array('w'    => 3445,
 												'h'    => 3445,

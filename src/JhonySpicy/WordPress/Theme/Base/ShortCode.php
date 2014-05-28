@@ -1,5 +1,5 @@
 <?php
-namespace Jhonyspicy\Wordpress\ThemeBase;
+namespace Jhonyspicy\Wordpress\Theme\Base;
 class ShortCode {
 	static public $footerScript = '';
 	static private $wp_footer = false;

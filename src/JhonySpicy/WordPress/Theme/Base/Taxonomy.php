@@ -1,5 +1,5 @@
 <?php
-namespace Jhonyspicy\Wordpress\ThemeBase;
+namespace Jhonyspicy\Wordpress\Theme\Base;
 abstract class Taxonomy {
 	protected $title = 'タクソノミー名';
 

@@ -1,4 +1,5 @@
 <?php
+namespace Jhonyspicy\Wordpress\Theme\Base;
 class Theme {
 	static public function after_setup_theme() {
 		/*

@@ -1,4 +1,5 @@
 <?php
+namespace Jhonyspicy\Wordpress\Theme\Base;
 class Pager {
 	/**
 	 * ページャーの関数。数字を配列で返す。
