@@ -34,7 +34,7 @@ abstract class PostType {
 	 *
 	 * @var array
 	 */
-	protected $custom_fields = array();
+	protected $options = array();
 
 	/**
 	 * 自分自身の管理画面なのかどうか
@@ -198,7 +198,7 @@ abstract class PostType {
 		$nonce_name = $this->nonce_name();
 
 		//カスタムフィールドの無いカスタム投稿なら何もしない
-		if (count($this->custom_fields) == 0) {
+		if (count($this->options) == 0) {
 			return $post_id;
 		}
 
@@ -228,7 +228,7 @@ abstract class PostType {
 		}
 
 		//カスタムフィールドの値を集める
-		foreach($this->custom_fields as $field) {
+		foreach($this->options as $field) {
 			$custom_values[$field] = $_POST[$field];
 		}
 
@@ -236,7 +236,7 @@ abstract class PostType {
 		$custom_values = $this->custom_field_check($custom_values);
 
 		//更新する
-		foreach($this->custom_fields as $field) {
+		foreach($this->options as $field) {
 			if (array_key_exists($field, $custom_values) && $custom_values[$field]) {
 				update_post_meta($post_id, $field, $custom_values[$field]);
 			} else {
@@ -322,20 +322,26 @@ abstract class PostType {
 	 * 投稿画面に必要なスクリプトを読み込む
 	 */
 	public function admin_print_scripts() {
-		wp_enqueue_script($this->name() . '_script', get_template_directory_uri() . '/js/admin/post_type/'. $this->name() .'.js', array('jquery'), '1.0.0', true);
+		if (is_file(get_template_directory() . '/js/admin/post_type/'. $this->name() .'.js')) {
+			wp_enqueue_script($this->name() . '_script', get_template_directory_uri() . '/js/admin/post_type/'. $this->name() .'.js', array('jquery'), '1.0.0', true);
+		}
 	}
 
 	/**
 	 * 投稿画面に必要なスタイルを読み込む
 	 */
 	public function admin_print_styles() {
-		wp_enqueue_style($this->name() . '_style', get_template_directory_uri() . '/css/admin/post_type/'. $this->name() .'/style.css', array(), '1.0.0');
+		if (is_file(get_template_directory_uri() . '/css/admin/post_type/'. $this->name() .'/style.css')) {
+			wp_enqueue_style($this->name() . '_style', get_template_directory_uri() . '/css/admin/post_type/'. $this->name() .'/style.css', array(), '1.0.0');
+		}
 	}
 
 	/**
 	 * ビジュアルエディタに必要なスタイルを読み込む
 	 */
 	public function admin_head() {
-		add_editor_style('css/admin/'. $this->name() .'/editor.css');
+		if (is_file(get_template_directory_uri() . '/css/admin/'. $this->name() .'/editor.css')) {
+			add_editor_style(get_template_directory_uri() . '/css/admin/'. $this->name() .'/editor.css');
+		}
 	}
 }
