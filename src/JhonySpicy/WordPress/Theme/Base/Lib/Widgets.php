@@ -1,5 +1,5 @@
 <?php
-namespace Jhonyspicy\Wordpress\Theme\Base;
+namespace Jhonyspicy\Wordpress\Theme\Base\Lib;
 abstract class Widgets {
 	static $widgetList = array();
 

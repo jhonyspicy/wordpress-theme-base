@@ -1,5 +1,5 @@
 <?php
-namespace Jhonyspicy\Wordpress\Theme\Base;
+namespace Jhonyspicy\Wordpress\Theme\Base\Lib;
 abstract class PostType {
 	/**
 	 * 画面上に表示される日本語名
@@ -126,27 +126,60 @@ abstract class PostType {
 	 * カスタム投稿を登録
 	 */
 	public function register_post_type() {
-		register_post_type($this->name(), $this->get_setting());
+		if (in_array($this->name(), array('post', 'page'))) {
+			$supportList = array(
+				'title',
+				'editor',
+				'author',
+				'thumbnail',
+				'excerpt',
+				'trackbacks',
+				'custom-fields',
+				'comments',
+				'revisions',
+				'page-attributes',
+				'post-formats',
+			);
+
+			foreach($supportList as $support) {
+				if (in_array($support, $this->supports)) {
+					$this->add_post_type_support($support);
+				} else {
+					$this->remove_post_type_support($support);
+				}
+			}
+		} else {
+			register_post_type($this->name(), $this->get_setting());
+		}
 	}
 
 	/**
 	 * フックを登録する。
 	 */
 	public function add_hooks() {
+		add_action('edit_form_after_title', array($this, 'edit_form_after_title'));
+		add_action('save_post', array($this, 'save_post'));
+		add_action('admin_print_scripts', array($this, 'admin_print_scripts'));
+		add_action('admin_print_styles', array($this, 'admin_print_styles'));
+		add_action('admin_head', array($this, 'admin_head'));
+
+		if (in_array($this->name(), array('post', 'page'))) {
+			add_action('add_meta_boxes', array($this, 'add_meta_boxes'), 10, 2);
+		}
 	}
 
 	/**
 	 * メタボックス
 	 */
-	public function add_meta_boxes() {
-		add_meta_box('detail_meta_box', '詳細情報', array($this, 'meta_box_inner'), $this->name());
+	public function add_meta_boxes($post_type, $post) {
+		add_meta_box('detail_meta_box', '詳細情報', array($this, 'meta_box_inner'));
 	}
 
 	/**
 	 * 追加したメタボックスの中身
 	 */
 	public function meta_box_inner() {
-		echo 'yeah!';
+		echo 'this is meta box inner';
 	}
 
 	/**
@@ -243,14 +276,6 @@ abstract class PostType {
 	 */
 	protected function the_nonce() {
 		return '<input type="hidden" name="'. $this->nonce_name() .'" id="'. $this->nonce_name() .'" value="' . wp_create_nonce($this->title . 'に追加したカスタムフィールド') . '" />';
-	}
-
-	/**
-	 * 主に「Post」と「Page」で使う予定。
-	 * 必要・不要となるサポートを追加・削除するときは
-	 * これをオーバーライドしてください。
-	 */
-	public function post_type_support() {
 	}
 
 	/**

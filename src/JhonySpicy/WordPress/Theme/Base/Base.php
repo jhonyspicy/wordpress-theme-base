@@ -14,8 +14,8 @@ class Base {
 	 * @var array
 	 */
 	static $supportDirList = array('PostType',
-//								   'ShortCode',
-//								   'Taxonomy',
+								   'ShortCode',
+								   'Taxonomy',
 //								   'Widgets',
 	);
 
@@ -24,8 +24,9 @@ class Base {
 	 */
 	static public function initialize() {
 		foreach (self::$supportDirList as $dir) {
-			$dirname = get_stylesheet_directory() . '/classes/' . $dir;
-			if (is_dir($dirname) && $handle = opendir($dirname)) {
+			$dirPath = get_stylesheet_directory() . '/classes/' . $dir;
+			if (is_dir($dirPath) && $handle = opendir($dirPath)) {
+
 				while (false !== ($file = readdir($handle))) {
 					if (is_file(get_stylesheet_directory() . '/classes/' . $dir . '/' . $file)) {
 						$className = str_replace('.php', '', $file);
@@ -47,17 +48,40 @@ class Base {
 	 * フックの登録
 	 */
 	static public function add_hooks() {
+		//投稿タイプ
 		if (array_key_exists('PostType', self::$classes)) {
 			foreach(self::$classes['PostType'] as $postType) {
 				add_action('init', array($postType, 'register_post_type'));
 			}
 		}
 
+		//タクソノミー
+		if (array_key_exists('Taxonomy', self::$classes)) {
+			foreach(self::$classes['Taxonomy'] as $taxonomy) {
+				add_action('init', array($taxonomy, 'register_taxonomy'));
+			}
+		}
+
+		//ショートコード
+		if (array_key_exists('ShortCode', self::$classes)) {
+			foreach(self::$classes['ShortCode'] as $shortCode) {
+				add_shortcode($shortCode->name(), array($shortCode, 'do_shortcode'));
+			}
+		}
+
+		//管理画面で必要になるフックを登録する
 		add_action('current_screen', function () {
 			if (array_key_exists('PostType', self::$classes)) {
 				foreach(self::$classes['PostType'] as $postType) {
 					if ($postType->is_self()) {
 						$postType->add_hooks();
+					}
+				}
+			}
+			if (array_key_exists('Taxonomy', self::$classes)) {
+				foreach(self::$classes['Taxonomy'] as $taxonomy) {
+					if ($taxonomy->is_self()) {
+						$taxonomy->add_hooks();
 					}
 				}
 			}

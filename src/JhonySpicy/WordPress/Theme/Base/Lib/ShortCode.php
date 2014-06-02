@@ -1,5 +1,5 @@
 <?php
-namespace Jhonyspicy\Wordpress\Theme\Base;
+namespace Jhonyspicy\Wordpress\Theme\Base\Lib;
 class ShortCode {
 	static public $footerScript = '';
 	static private $wp_footer = false;
@@ -21,17 +21,6 @@ class ShortCode {
 	public function name() {
 		$v = explode('\\', $this->class_name());
 		return strtolower(end($v));
-	}
-
-	/**
-	 * ショートコードを登録する。
-	 */
-	static public function after_setup_theme() {
-		$googleMaps = new ShortCode\GoogleMaps();
-		$menu = new ShortCode\Menu();
-
-		add_shortcode($googleMaps->name(), array($googleMaps, 'do_shortcode'));
-		add_shortcode($menu->name(), array($menu, 'do_shortcode'));
 	}
 
 	/**
@@ -61,7 +50,7 @@ class ShortCode {
 
 		self::$wp_footer = true;
 
-		add_action('wp_footer', array('ShortCode', 'wp_footer'));
+		add_action('wp_footer', array('Jhonyspicy\Wordpress\Theme\Base\Lib\ShortCode', 'wp_footer'));
 	}
 
 	/**
