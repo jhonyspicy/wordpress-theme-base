@@ -69,7 +69,7 @@ abstract class Taxonomy {
 	 * フックを登録する。
 	 */
 	public function add_hooks() {
-		TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//		TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		add_action($this->name() . '_add_form_fields', array($this, 'add_form_fields'));
 		add_action($this->name() . '_edit_form', array($this, 'edit_form'));
 
