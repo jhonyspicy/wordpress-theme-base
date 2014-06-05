@@ -86,5 +86,12 @@ class Base {
 				}
 			}
 		});
+
+		//Ajaxなどの通信でどの画面を出力する予定なのかわからないフック
+		if (array_key_exists('Taxonomy', self::$classes)) {
+			foreach(self::$classes['Taxonomy'] as $taxonomy) {
+				$taxonomy->add_special_hooks();
+			}
+		}
 	}
 }

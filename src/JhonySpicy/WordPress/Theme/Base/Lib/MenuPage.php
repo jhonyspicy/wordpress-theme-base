@@ -1,18 +1,16 @@
 <?php
-abstract class MenuPage extends Base {
+namespace Jhonyspicy\Wordpress\Theme\Base\Lib;
+use \Jhonyspicy\Wordpress\Theme\Base\Super as Super;
+
+abstract class MenuPage extends Super {
+	protected $type = 'settings_page';
+
 	/**
 	 * 画面上に表示される日本語名
 	 *
 	 * @var string
 	 */
 	protected $title;
-
-	/**
-	 * グループ名(必要らしい)
-	 *
-	 * @var string
-	 */
-	protected $group_name = '';
 
 	/**
 	 * データベースに追加するべき項目のリスト
@@ -27,16 +25,6 @@ abstract class MenuPage extends Base {
 	 * @var string
 	 */
 	protected $capability = 'manage_options';
-
-	public function is_self() {
-		$screen = get_current_screen();
-
-		if ($screen->id != 'settings_page_' . $this->name()) {
-			return false;
-		}
-
-		return true;
-	}
 
 	/**
 	 * 管理画面の「設定」の下にメニューを追加

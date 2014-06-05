@@ -1,27 +1,10 @@
 <?php
 namespace Jhonyspicy\Wordpress\Theme\Base\Lib;
-class ShortCode {
+use \Jhonyspicy\Wordpress\Theme\Base\Super as Super;
+
+class ShortCode extends Super {
 	static public $footerScript = '';
 	static private $wp_footer = false;
-
-	/**
-	 * クラス名を取得する(名前空間込)
-	 *
-	 * @return string
-	 */
-	private function class_name() {
-		return get_class($this);
-	}
-
-	/**
-	 * 投稿タイプの名前(ID?)を取得する
-	 *
-	 * @return string
-	 */
-	public function name() {
-		$v = explode('\\', $this->class_name());
-		return strtolower(end($v));
-	}
 
 	/**
 	 * 定義されていないことは無いとは思うけど、

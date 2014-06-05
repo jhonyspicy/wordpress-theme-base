@@ -1,12 +1,9 @@
 <?php
 namespace Jhonyspicy\Wordpress\Theme\Base\Lib;
-abstract class PostType {
-	/**
-	 * 画面上に表示される日本語名
-	 *
-	 * @var string
-	 */
-	protected $title;
+use \Jhonyspicy\Wordpress\Theme\Base\Super as Super;
+
+abstract class PostType extends Super {
+	protected $type = 'post_type';
 
 	/**
 	 * このテーマがサポートするタクソノミー
@@ -34,40 +31,7 @@ abstract class PostType {
 	 *
 	 * @var array
 	 */
-	protected $custom_fields = array();
-
-	/**
-	 * 自分自身の管理画面なのかどうか
-	 * @return bool
-	 */
-	public function is_self() {
-		$screen = get_current_screen();
-
-		if ($screen->post_type != $this->name()) {
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * クラス名を取得する(名前空間込)
-	 *
-	 * @return string
-	 */
-	private function class_name() {
-		return get_class($this);
-	}
-
-	/**
-	 * 投稿タイプの名前(ID?)を取得する
-	 *
-	 * @return string
-	 */
-	public function name() {
-		$v = explode('\\', $this->class_name());
-		return strtolower(end($v));
-	}
+	protected $options = array();
 
 	/**
 	 * ラベルを返す。
@@ -158,6 +122,7 @@ abstract class PostType {
 	 */
 	public function add_hooks() {
 		add_action('edit_form_after_title', array($this, 'edit_form_after_title'));
+		add_action('edit_form_after_editor', array($this, 'edit_form_after_editor'));
 		add_action('save_post', array($this, 'save_post'));
 		add_action('admin_print_scripts', array($this, 'admin_print_scripts'));
 		add_action('admin_print_styles', array($this, 'admin_print_styles'));
@@ -191,6 +156,12 @@ abstract class PostType {
 	}
 
 	/**
+	 * ビジュアルエディタ直下
+	 */
+	public function edit_form_after_editor () {
+	}
+
+	/**
 	 * カスタムフィールドを保存する
 	 */
 	public function save_post($post_id) {
@@ -199,7 +170,7 @@ abstract class PostType {
 		$nonce_name = $this->nonce_name();
 
 		//カスタムフィールドの無いカスタム投稿なら何もしない
-		if (count($this->custom_fields) == 0) {
+		if (count($this->options) == 0) {
 			return $post_id;
 		}
 
@@ -228,26 +199,13 @@ abstract class PostType {
 			return $post_id;
 		}
 
-		//入力値をチェックしながら保存する
-		foreach($this->custom_fields as $key => $val) {
-			if (is_int($key)) {
-				$field = $val;
-				$value = $_POST[$val];
-			} else {
-				if (!empty($val) && is_callable($val)) {
-					$field = $key;
-					$value = call_user_func_array($val, array($_POST[$key]));
-				} else {
-					$field = $key;
-					$value = $_POST[$key];
-				}
-			}
+		$checked_list = $this->check_value($_POST);
 
-			//値があれば更新なければ削除
-			if ($value) {
-				update_post_meta($post_id, $field, $value);
+		foreach($checked_list as $key => $val) {
+			if ($val) {
+				update_post_meta($post_id, $key, $val);
 			} else {
-				delete_post_meta($post_id, $field);
+				delete_post_meta($post_id, $key);
 			}
 		}
 

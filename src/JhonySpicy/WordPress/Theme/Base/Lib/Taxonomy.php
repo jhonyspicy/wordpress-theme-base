@@ -1,30 +1,9 @@
 <?php
 namespace Jhonyspicy\Wordpress\Theme\Base\Lib;
-abstract class Taxonomy {
-	protected $title = 'タクソノミー名';
+use \Jhonyspicy\Wordpress\Theme\Base\Super as Super;
 
-	private function class_name() {
-		return get_class($this);
-	}
-
-	protected function name() {
-		$v = explode('\\', $this->class_name());
-		return strtolower(end($v));
-	}
-
-	/**
-	 * 自分自身の管理画面なのかどうか
-	 * @return bool
-	 */
-	public function is_self() {
-		$screen = get_current_screen();
-
-		if ($screen->taxonomy != $this->name()) {
-			return false;
-		}
-
-		return true;
-	}
+abstract class Taxonomy extends Super {
+	protected $type = 'taxonomy';
 
 	/**
 	 * タクソノミーのラベルを取得
@@ -65,33 +44,37 @@ abstract class Taxonomy {
 		register_taxonomy($this->name(), $this->get_post_types(), $this->get_setting());
 	}
 
-	/**
-	 * フックを登録する。
-	 */
 	public function add_hooks() {
-//		TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		add_action($this->name() . '_add_form_fields', array($this, 'add_form_fields'));
 		add_action($this->name() . '_edit_form', array($this, 'edit_form'), 10, 2);
-
-		add_action('add_' . $this->name(), array($this, 'save_add'));
-		add_action('edit_' . $this->name(), array($this, 'save_edit'));
 
 		add_filter('wp_terms_checklist_args', array($this, 'wp_terms_checklist_args'), 10, 2);
 	}
 
+	/**
+	 * フック「current_screen」に通らないので、
+	 * 別途特別にフックを登録する必要があるもの。
+	 * フック名にスラッグがつくものが多い。
+	 */
+	public function add_special_hooks() {
+		add_action('created_' . $this->name(), array($this, 'save'), 10, 2);
+		add_action('edited_' . $this->name(), array($this, 'save'), 10, 2);
+		add_action('delete_' . $this->name(), array($this, 'delete'), 10, 2);
+	}
+
 	public function add_form_fields($taxonomy) {
-		echo 'AAA';
+		echo '追加画面に追加する';
 	}
 
 	public function edit_form($tag, $taxonomy) {
-		echo 'BBB';
+		echo '編集画面に追加する';
 	}
 
-	public function save_add() {
+	public function save($term_id, $tt_id) {
 		$a = 'a';
 	}
 
-	public function save_edit() {
+	public function delete($term_id, $tt_id) {
 		$a = 'a';
 	}
 
