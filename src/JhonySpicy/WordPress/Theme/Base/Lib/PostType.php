@@ -171,7 +171,8 @@ abstract class PostType {
 	/**
 	 * メタボックス
 	 */
-	public function add_meta_boxes($post_type, $post) {
+	public function add_meta_boxes() {
+		$args = func_get_args();
 		add_meta_box('detail_meta_box', '詳細情報', array($this, 'meta_box_inner'));
 	}
 
@@ -186,7 +187,7 @@ abstract class PostType {
 	 * タイトルの下にテキストボックスを出す。
 	 */
 	public function edit_form_after_title() {
-		echo $this->the_nonce();
+		$this->the_nonce();
 	}
 
 	/**
@@ -227,36 +228,30 @@ abstract class PostType {
 			return $post_id;
 		}
 
-		//カスタムフィールドの値を集める
-		foreach($this->custom_fields as $field) {
-			$custom_values[$field] = $_POST[$field];
-		}
+		//入力値をチェックしながら保存する
+		foreach($this->custom_fields as $key => $val) {
+			if (is_int($key)) {
+				$field = $val;
+				$value = $_POST[$val];
+			} else {
+				if (!empty($val) && is_callable($val)) {
+					$field = $key;
+					$value = call_user_func_array($val, array($_POST[$key]));
+				} else {
+					$field = $key;
+					$value = $_POST[$key];
+				}
+			}
 
-		//入力項目のチェックとか、
-		$custom_values = $this->custom_field_check($custom_values);
-
-		//更新する
-		foreach($this->custom_fields as $field) {
-			if (array_key_exists($field, $custom_values) && $custom_values[$field]) {
-				update_post_meta($post_id, $field, $custom_values[$field]);
+			//値があれば更新なければ削除
+			if ($value) {
+				update_post_meta($post_id, $field, $value);
 			} else {
 				delete_post_meta($post_id, $field);
 			}
 		}
 
 		return $post_id;
-	}
-
-	/**
-	 * 入力項目のチェック
-	 * オーバーライドして使ってね
-	 *
-	 * @param $values
-	 *
-	 * @return mixed
-	 */
-	protected function custom_field_check($values) {
-		return $values;
 	}
 
 	/**
@@ -270,11 +265,20 @@ abstract class PostType {
 	}
 
 	/**
-	 * nonce のコードを取得する
+	 * nonce のコードを出力する
 	 *
 	 * @return string
 	 */
 	protected function the_nonce() {
+		echo $this->get_nonce();
+	}
+
+	/**
+	 * nonce のコードを取得する
+	 *
+	 * @return string
+	 */
+	protected function get_nonce() {
 		return '<input type="hidden" name="'. $this->nonce_name() .'" id="'. $this->nonce_name() .'" value="' . wp_create_nonce($this->title . 'に追加したカスタムフィールド') . '" />';
 	}
 
@@ -322,20 +326,29 @@ abstract class PostType {
 	 * 投稿画面に必要なスクリプトを読み込む
 	 */
 	public function admin_print_scripts() {
-		wp_enqueue_script($this->name() . '_script', get_template_directory_uri() . '/js/admin/post_type/'. $this->name() .'.js', array('jquery'), '1.0.0', true);
+		$file_path = '/js/admin/post_type/'. $this->name() .'.js';
+		if (is_file(get_template_directory() . $file_path)) {
+			wp_enqueue_script($this->name() . '_script', get_template_directory_uri() . $file_path, array('jquery'), '1.0.0', true);
+		}
 	}
 
 	/**
 	 * 投稿画面に必要なスタイルを読み込む
 	 */
 	public function admin_print_styles() {
-		wp_enqueue_style($this->name() . '_style', get_template_directory_uri() . '/css/admin/post_type/'. $this->name() .'/style.css', array(), '1.0.0');
+		$file_path = '/css/admin/post_type/'. $this->name() .'/style.css';
+		if (is_file(get_template_directory() . '/' . $file_path)) {
+			wp_enqueue_style($this->name() . '_style', get_template_directory_uri() . $file_path, array('jquery'), '1.0.0', true);
+		}
 	}
 
 	/**
 	 * ビジュアルエディタに必要なスタイルを読み込む
 	 */
 	public function admin_head() {
-		add_editor_style('css/admin/'. $this->name() .'/editor.css');
+		$file_path = '/css/admin/post_type/'. $this->name() .'/editor.css';
+		if (is_file(get_template_directory() . $file_path)) {
+			add_editor_style(get_template_directory_uri() . $file_path);
+		}
 	}
 }

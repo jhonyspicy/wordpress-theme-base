@@ -71,7 +71,7 @@ abstract class Taxonomy {
 	public function add_hooks() {
 //		TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		add_action($this->name() . '_add_form_fields', array($this, 'add_form_fields'));
-		add_action($this->name() . '_edit_form', array($this, 'edit_form'));
+		add_action($this->name() . '_edit_form', array($this, 'edit_form'), 10, 2);
 
 		add_action('add_' . $this->name(), array($this, 'save_add'));
 		add_action('edit_' . $this->name(), array($this, 'save_edit'));
@@ -79,11 +79,11 @@ abstract class Taxonomy {
 		add_filter('wp_terms_checklist_args', array($this, 'wp_terms_checklist_args'), 10, 2);
 	}
 
-	public function add_form_fields() {
+	public function add_form_fields($taxonomy) {
 		echo 'AAA';
 	}
 
-	public function edit_form() {
+	public function edit_form($tag, $taxonomy) {
 		echo 'BBB';
 	}
 
