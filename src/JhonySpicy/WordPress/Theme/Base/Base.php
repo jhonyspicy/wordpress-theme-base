@@ -1,5 +1,6 @@
 <?php
 namespace Jhonyspicy\Wordpress\Theme\Base;
+use Jhonyspicy\Wordpress\Theme\Base\Lib\Widgets as Widgets;
 
 class Base {
 	/**
@@ -16,7 +17,8 @@ class Base {
 	static $supportDirList = array('PostType',
 								   'ShortCode',
 								   'Taxonomy',
-//								   'Widgets',
+								   'Widgets',
+								   'MenuPage',
 	);
 
 	/**
@@ -29,11 +31,16 @@ class Base {
 
 				while (false !== ($file = readdir($handle))) {
 					if (is_file(get_stylesheet_directory() . '/classes/' . $dir . '/' . $file)) {
-						$className = str_replace('.php', '', $file);
-						$classPath = '\\' . $dir . '\\' . $className;
-						$obj       = new $classPath();
+						if ($dir == 'Widgets') {
+							$className = str_replace('.php', '', $file);
+							self::$classes[$dir][] = '\\' . $dir . '\\' . $className;
+						} else {
+							$className = str_replace('.php', '', $file);
+							$classPath = '\\' . $dir . '\\' . $className;
+							$obj       = new $classPath();
 
-						self::$classes[$dir][$className] = $obj;
+							self::$classes[$dir][$className] = $obj;
+						}
 					}
 				}
 
@@ -52,6 +59,25 @@ class Base {
 		if (array_key_exists('PostType', self::$classes)) {
 			foreach(self::$classes['PostType'] as $postType) {
 				add_action('init', array($postType, 'register_post_type'));
+			}
+		}
+
+		//ウィジェットの登録
+		if (array_key_exists('Widgets', self::$classes)) {
+			add_action('widgets_init', function () {
+				Widgets::widgets_init();
+
+				foreach(self::$classes['Widgets'] as $widget) {
+					Widgets::register_widget($widget);
+				}
+			});
+		}
+
+		//メニューページ
+		if (array_key_exists('MenuPage', self::$classes)) {
+			foreach(self::$classes['MenuPage'] as $menuPage) {
+				add_action('admin_menu', array($menuPage, 'admin_menu'));
+				add_action('admin_init', array($menuPage, 'admin_init'));
 			}
 		}
 
@@ -78,11 +104,23 @@ class Base {
 					}
 				}
 			}
+			if (array_key_exists('MenuPage', self::$classes)) {
+				foreach(self::$classes['MenuPage'] as $menuPage) {
+					if ($menuPage->is_self()) {
+						$menuPage->add_hooks();
+					}
+				}
+			}
 			if (array_key_exists('Taxonomy', self::$classes)) {
 				foreach(self::$classes['Taxonomy'] as $taxonomy) {
 					if ($taxonomy->is_self()) {
 						$taxonomy->add_hooks();
 					}
+				}
+			}
+			if (array_key_exists('Widgets', self::$classes)) {
+				if (Widgets::is_self()) {
+					Widgets::add_hooks();
 				}
 			}
 		});

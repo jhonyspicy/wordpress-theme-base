@@ -60,6 +60,14 @@ abstract class MenuPage extends Super {
 		}
 	}
 
+	/**
+	 * フックを登録する。
+	 */
+	public function add_hooks() {
+		add_action('admin_print_scripts', array($this, 'admin_print_scripts'));
+		add_action('admin_print_styles', array($this, 'admin_print_styles'));
+	}
+
 	public function admin_print_scripts() {
 		wp_enqueue_script($this->name() . '_script', get_template_directory_uri() . '/js/admin/menu_page/'. $this->name() .'.js', array('jquery', 'jquery-ui-datepicker', 'jquery-ui-draggable'), '1.0.0', true);
 	}

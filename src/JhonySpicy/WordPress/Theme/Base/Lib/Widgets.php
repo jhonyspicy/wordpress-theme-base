@@ -10,9 +10,8 @@ abstract class Widgets {
 	 */
 	static public function is_self() {
 		$screen = get_current_screen();
-		$name = strtolower(self::class_name());
 
-		if ($screen->id != $name) {
+		if ($screen->id != self::name()) {
 			return false;
 		}
 
@@ -54,10 +53,6 @@ abstract class Widgets {
 				unregister_widget($widget_class);
 			}
 		}
-
-		self::register_widget('Widgets\Banner');
-		self::register_widget('Widgets\SpecialContents');
-		self::register_widget('Widgets\OfficialSns');
 	}
 
 	static public function register_widget($widget) {
@@ -66,19 +61,32 @@ abstract class Widgets {
 		register_widget($widget);
 	}
 
+	static public function add_hooks() {
+		add_action('admin_print_scripts', array(__CLASS__, 'admin_print_scripts'));
+		add_action('admin_print_styles', array(__CLASS__, 'admin_print_styles'));
+	}
+
 	static public function admin_print_scripts() {
 		wp_enqueue_media(); //これがないとjavascriptで「wp.media()」実行時にエラーとなる。詳細は不明
 
 		foreach(self::$widgetList as $widget) {
 			$widgetName = self::name($widget);
-			wp_enqueue_script($widgetName, get_template_directory_uri() . '/js/admin/widgets/'. $widgetName .'.js', array('jquery', 'media-upload', 'media-views'), '1.0.0', true);
+			$file_path = '/js/admin/widgets/'. $widgetName .'.js';
+
+			if (is_file(get_template_directory() . $file_path)) {
+				wp_enqueue_script($widgetName . '_script', get_template_directory_uri() . $file_path, array('jquery'), '1.0.0', true);
+			}
 		}
 	}
 
 	static public function admin_print_styles() {
 		foreach(self::$widgetList as $widget) {
 			$widgetName = self::name($widget);
-			wp_enqueue_style($widgetName, get_template_directory_uri() . '/css/admin/widgets/'. $widgetName .'.css', array(), '1.0.0');
+			$file_path = '/css/admin/widgets/'. $widgetName .'.css';
+
+			if (is_file(get_template_directory() . $file_path)) {
+				wp_enqueue_style($widgetName, get_template_directory_uri() . $filePath, array(), '1.0.0');
+			}
 		}
 	}
 }
