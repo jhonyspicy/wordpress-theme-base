@@ -2,7 +2,7 @@
 	"name":     "jhonyspicy/wordpress-theme-base",
 	"keywords": ["wordpress", "theme"],
 	"license":  "LGPLv3",
-	"version":  "0.0.1",
+	"version":  "0.1",
 	"require": {
 		"php": ">=5.3.3"
 	},
