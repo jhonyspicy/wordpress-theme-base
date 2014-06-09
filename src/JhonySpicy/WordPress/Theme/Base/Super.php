@@ -45,7 +45,7 @@ abstract class Super {
 				}
 				break;
 
-			case 'settings_page':
+			case 'menu_page':
 				if ($screen->id == 'settings_page_' . $this->name()) {
 					return true;
 				}
@@ -105,5 +105,27 @@ abstract class Super {
 		}
 
 		return $result_list;
+	}
+
+	/**
+	 * そこにファイルがあれば読み込む
+	 * デフォルトのスクリプトを追加。
+	 */
+	public function admin_print_scripts() {
+		$file_path = '/js/admin/' . $this->type . '/'. $this->name() .'.js';
+		if (is_file(get_template_directory() . $file_path)) {
+			wp_enqueue_script($this->name() . '_script', get_template_directory_uri() . $file_path, array('jquery'), '1.0.0', true);
+		}
+	}
+
+	/**
+	 * そこにファイルがあれば読み込む
+	 * デフォルトのスタイルを追加。
+	 */
+	public function admin_print_styles() {
+		$file_path = '/css/admin/' . $this->type . '/' . $this->name() . '/style.css';
+		if (is_file(get_template_directory() . '/' . $file_path)) {
+			wp_enqueue_style($this->name() . '_style', get_template_directory_uri() . $file_path, array('jquery'), '1.0.0', true);
+		}
 	}
 }

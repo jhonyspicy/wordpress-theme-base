@@ -46,7 +46,7 @@ abstract class Taxonomy extends Super {
 
 	public function add_hooks() {
 		add_action($this->name() . '_add_form_fields', array($this, 'add_form_fields'));
-		add_action($this->name() . '_edit_form', array($this, 'edit_form'), 10, 2);
+		add_action($this->name() . '_edit_form_fields', array($this, 'edit_form_fields'), 10, 2);
 
 		add_filter('wp_terms_checklist_args', array($this, 'wp_terms_checklist_args'), 10, 2);
 	}
@@ -62,20 +62,54 @@ abstract class Taxonomy extends Super {
 		add_action('delete_' . $this->name(), array($this, 'delete'), 10, 2);
 	}
 
+	/**
+	 * 追加画面に追加するhtml
+	 *
+	 * @param $taxonomy
+	 */
 	public function add_form_fields($taxonomy) {
-		echo '追加画面に追加する';
 	}
 
-	public function edit_form($tag, $taxonomy) {
-		echo '編集画面に追加する';
+	/**
+	 * 編集画面に追加する
+	 *
+	 * @param $tag
+	 * @param $taxonomy
+	 */
+	public function edit_form_fields($tag, $taxonomy) {
 	}
 
 	public function save($term_id, $tt_id) {
-		$a = 'a';
+		$checked_list = $this->check_value($_POST);
+
+		foreach($checked_list as $key => $val) {
+			if ($val) {
+				update_option("taxonomy_{$term_id}_{$key}",$val);
+			} else {
+				delete_option("taxonomy_{$term_id}_{$key}");
+			}
+		}
 	}
 
+	/**
+	 * 削除した時に呼ばれる
+	 *
+	 * @param $term_id
+	 * @param $tt_id
+	 */
 	public function delete($term_id, $tt_id) {
-		$a = 'a';
+		//入力値をチェックしながら保存する
+		foreach($this->options as $key => $val) {
+			if (is_int($key)) {
+				delete_option("taxonomy_{$term_id}_{$val}");
+			} else {
+				if (!empty($val) && is_callable($val)) {
+					delete_option("taxonomy_{$term_id}_{$key}");
+				} else {
+					delete_option("taxonomy_{$term_id}_{$key}");
+				}
+			}
+		}
 	}
 
 	/**
@@ -89,19 +123,5 @@ abstract class Taxonomy extends Super {
 	 */
 	public function wp_terms_checklist_args($args, $post_id = null) {
 		return $args;
-	}
-
-	/**
-	 * 投稿画面に必要なスクリプトを読み込む
-	 */
-	public function admin_print_scripts() {
-		wp_enqueue_script($this->name() . '_script', get_template_directory_uri() . '/js/admin/taxonomy/'. $this->name() .'.js', array('jquery'), '1.0.0', true);
-	}
-
-	/**
-	 * 投稿画面に必要なスタイルを読み込む
-	 */
-	public function admin_print_styles() {
-		wp_enqueue_style($this->name() . '_style', get_template_directory_uri() . '/css/admin/taxonomy/'. $this->name() .'/style.css', array(), '1.0.0');
 	}
 }

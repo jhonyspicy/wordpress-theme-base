@@ -3,7 +3,7 @@ namespace Jhonyspicy\Wordpress\Theme\Base\Lib;
 use \Jhonyspicy\Wordpress\Theme\Base\Super as Super;
 
 abstract class MenuPage extends Super {
-	protected $type = 'settings_page';
+	protected $type = 'menu_page';
 
 	/**
 	 * 画面上に表示される日本語名
@@ -21,6 +21,7 @@ abstract class MenuPage extends Super {
 
 	/**
 	 * 権限レベル
+	 * 参考: http://wpdocs.sourceforge.jp/%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E3%83%AC%E3%83%99%E3%83%AB
 	 *
 	 * @var string
 	 */
@@ -39,8 +40,7 @@ abstract class MenuPage extends Super {
 	 *
 	 * 参考: http://wpdocs.sourceforge.jp/Creating_Options_Pages
 	 */
-	public function page_inner() {
-	}
+	abstract public function page_inner();
 
 	/**
 	 * 設定する項目を登録する
@@ -66,13 +66,5 @@ abstract class MenuPage extends Super {
 	public function add_hooks() {
 		add_action('admin_print_scripts', array($this, 'admin_print_scripts'));
 		add_action('admin_print_styles', array($this, 'admin_print_styles'));
-	}
-
-	public function admin_print_scripts() {
-		wp_enqueue_script($this->name() . '_script', get_template_directory_uri() . '/js/admin/menu_page/'. $this->name() .'.js', array('jquery', 'jquery-ui-datepicker', 'jquery-ui-draggable'), '1.0.0', true);
-	}
-
-	public function admin_print_styles() {
-		wp_enqueue_style($this->name() . '_style', get_template_directory_uri() . '/css/admin/menu_page/'. $this->name() .'.css', array(), '1.0.0');
 	}
 }

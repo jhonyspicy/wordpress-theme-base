@@ -281,30 +281,10 @@ abstract class PostType extends Super {
 	}
 
 	/**
-	 * 投稿画面に必要なスクリプトを読み込む
-	 */
-	public function admin_print_scripts() {
-		$file_path = '/js/admin/post_type/'. $this->name() .'.js';
-		if (is_file(get_template_directory() . $file_path)) {
-			wp_enqueue_script($this->name() . '_script', get_template_directory_uri() . $file_path, array('jquery'), '1.0.0', true);
-		}
-	}
-
-	/**
-	 * 投稿画面に必要なスタイルを読み込む
-	 */
-	public function admin_print_styles() {
-		$file_path = '/css/admin/post_type/'. $this->name() .'/style.css';
-		if (is_file(get_template_directory() . '/' . $file_path)) {
-			wp_enqueue_style($this->name() . '_style', get_template_directory_uri() . $file_path, array('jquery'), '1.0.0', true);
-		}
-	}
-
-	/**
 	 * ビジュアルエディタに必要なスタイルを読み込む
 	 */
 	public function admin_head() {
-		$file_path = '/css/admin/post_type/'. $this->name() .'/editor.css';
+		$file_path = '/css/admin/' . $this->type . '/'. $this->name() .'/editor.css';
 		if (is_file(get_template_directory() . $file_path)) {
 			add_editor_style(get_template_directory_uri() . $file_path);
 		}
