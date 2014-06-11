@@ -47,8 +47,7 @@ abstract class Taxonomy extends Super {
 	public function add_hooks() {
 		add_action($this->name() . '_add_form_fields', array($this, 'add_form_fields'));
 		add_action($this->name() . '_edit_form_fields', array($this, 'edit_form_fields'), 10, 2);
-
-		add_filter('wp_terms_checklist_args', array($this, 'wp_terms_checklist_args'), 10, 2);
+		add_action('wp_terms_checklist_args', array($this, 'wp_terms_checklist_args'), 10, 2);
 	}
 
 	/**
@@ -84,7 +83,7 @@ abstract class Taxonomy extends Super {
 
 		foreach($checked_list as $key => $val) {
 			if ($val) {
-				update_option("taxonomy_{$term_id}_{$key}",$val);
+				update_option("taxonomy_{$term_id}_{$key}", $val);
 			} else {
 				delete_option("taxonomy_{$term_id}_{$key}");
 			}
@@ -98,16 +97,12 @@ abstract class Taxonomy extends Super {
 	 * @param $tt_id
 	 */
 	public function delete($term_id, $tt_id) {
-		//入力値をチェックしながら保存する
+		//不要になったオプション値を削除する
 		foreach($this->options as $key => $val) {
 			if (is_int($key)) {
 				delete_option("taxonomy_{$term_id}_{$val}");
 			} else {
-				if (!empty($val) && is_callable($val)) {
-					delete_option("taxonomy_{$term_id}_{$key}");
-				} else {
-					delete_option("taxonomy_{$term_id}_{$key}");
-				}
+				delete_option("taxonomy_{$term_id}_{$key}");
 			}
 		}
 	}

@@ -54,7 +54,7 @@ class Base {
 	/**
 	 * フックの登録
 	 */
-	static public function add_hooks() {
+	static private function add_hooks() {
 		//投稿タイプ
 		if (array_key_exists('PostType', self::$classes)) {
 			foreach(self::$classes['PostType'] as $postType) {
