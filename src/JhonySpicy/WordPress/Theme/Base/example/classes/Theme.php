@@ -12,31 +12,17 @@ class Theme {
 		/*
 		 * テーマで必要なメニュー
 		 */
-		register_nav_menus(array('menu-1' => 'トップ ヘッダーメニュー',
-								 'menu-2' => '下層ページ ヘッダーメニュー',
-								 'menu-3' => 'ニュース 下部のメニュー',
-								 'menu-4' => 'Q&A 下部の解決しない時は',
-//								 'menu-5' => 'メニュー',
-//								 'menu-6' => 'メニュー',
-//								 'menu-7' => 'メニュー',
+		register_nav_menus(array('menu-1' => 'メニュー1',
+								 'menu-2' => 'メニュー2',
+								 'menu-3' => 'メニュー3',
 		));
 
 		/*
 		 * ウィジェットを登録するエリア
 		 */
-		self::register_sidebar(array('name' => 'フッター サイトマップ (上段)',)); //sidebar-1
-		self::register_sidebar(array('name' => 'フッター サイトマップ (下段)',)); //sidebar-2
-		self::register_sidebar(array('name' => 'トップ 右側',)); //sidebar-3
-		self::register_sidebar(array('name' => 'トップ スペシャルコンテンツ',)); //sidebar-4
-		self::register_sidebar(array('name' => 'トップ バーナー',)); //sidebar-5
-		self::register_sidebar(array('name' => 'ニュース 右側',)); //sidebar-6
-		self::register_sidebar(array('name' => '製品アーカイブ 右側',)); //sidebar-7
-		self::register_sidebar(array('name' => 'Q&A 左側', 'before_widget' => '<div id="%1$s" class="widget %2$s container clearfix">')); //sidebar-8
-		self::register_sidebar(array('name' => 'Q&A メイン(上段)', 'before_widget' => '<div id="%1$s" class="widget %2$s box-qa">')); //sidebar-9
-		self::register_sidebar(array('name' => 'Q&A メイン(下段)', 'before_widget' => '<div id="%1$s" class="widget %2$s box-qa">')); //sidebar-10
-//		self::register_sidebar(array('name' => '',)); //sidebar-11
-//		self::register_sidebar(array('name' => '',)); //sidebar-12
-//		self::register_sidebar(array('name' => '',)); //sidebar-13
+		self::register_sidebar(array('name' => 'ウィジェットエリア1',)); //sidebar-1
+		self::register_sidebar(array('name' => 'ウィジェットエリア2',)); //sidebar-2
+		self::register_sidebar(array('name' => 'ウィジェットエリア3',)); //sidebar-3
 	}
 
 	/**

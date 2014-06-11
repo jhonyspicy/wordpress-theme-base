@@ -2,19 +2,19 @@
 namespace Taxonomy;
 use \Jhonyspicy\Wordpress\Theme\Base\Lib\Taxonomy as Taxonomy;
 
-class BusinessFlow extends Taxonomy {
-	protected $title = '業務の流れ';
+class CustomTaxonomy extends Taxonomy {
+	protected $title = 'カスタムタクソノミー';
 
 	protected $options = array(
 		'keywords'
 	);
 
 	public function name() {
-		return 'business-flow';
+		return 'custom-taxonomy';
 	}
 
 	protected function get_post_types() {
-		return array('special-contents');
+		return array('custom-post');
 	}
 
 	public function wp_terms_checklist_args($args, $post_id = null) {

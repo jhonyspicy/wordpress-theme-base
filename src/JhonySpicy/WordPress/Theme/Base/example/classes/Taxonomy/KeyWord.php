@@ -6,7 +6,7 @@ class KeyWord extends Taxonomy {
 	protected $title = 'キーワード';
 
 	protected function get_post_types() {
-		return array('special-contents');
+		return array('custom-post');
 	}
 
 	protected function get_setting() {

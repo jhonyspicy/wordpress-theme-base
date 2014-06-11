@@ -2,18 +2,18 @@
 namespace PostType;
 use \Jhonyspicy\Wordpress\Theme\Base\Lib\PostType as PostType;
 
-class SpecialContents extends PostType {
-	protected $title = 'スペシャルコンテンツ';
+class CustomPost extends PostType {
+	protected $title = 'カスタムポスト';
 
 	public function __construct() {
 		$this->options = array(
-			'_a' => array($this, 'test'),
+			'_a' => array($this, 'some_check'),
 			'_b'
 		);
 	}
 
 	public function name() {
-		return 'special-contents';
+		return 'custom-post';
 	}
 
 	public function meta_box_inner() {
@@ -32,7 +32,9 @@ class SpecialContents extends PostType {
 	<?php
 	}
 
-	protected function test($v) {
+	protected function some_check($v) {
+		//...do some thing check
+
 		return $v;
 	}
 }

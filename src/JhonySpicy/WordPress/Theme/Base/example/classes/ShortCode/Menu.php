@@ -1,8 +1,9 @@
 <?php
 
 namespace ShortCode;
+use \Jhonyspicy\Wordpress\Theme\Base\Lib\ShortCode as ShortCode;
 
-class Menu extends \Jhonyspicy\Wordpress\Theme\Base\Lib\ShortCode {
+class Menu extends ShortCode {
 
 	public function do_shortcode($atts, $content) {
 		$atts = shortcode_atts(array('name'            => '',
