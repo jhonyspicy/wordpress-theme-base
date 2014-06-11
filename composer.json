@@ -7,7 +7,9 @@
 		"php": ">=5.3.3",
 		"jhonyspicy/wordpress-theme-base": "*",
 		"atomita/wordpress-layout-style-theme": "0.1.*",
-		"atomita/php-utils": "*"
+		"atomita/php-utils": "*",
+		"wpackagist-plugin/force-regenerate-thumbnails": "2.0.*",
+		"atomita/wordpress-thumbnail-filename-changer": "0.1.*"
 	},
 	"description": "This makes easier to make WordPress theme",
 	"autoload": {
