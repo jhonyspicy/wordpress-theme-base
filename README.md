@@ -20,7 +20,7 @@ write following code to functions.php which in your WrodPress theme
     ThemeBase::initialize();
 
 ### Step3
-see example directory.  
+see 'example' directory.  
 it include sample code.  
 copy it to WordPress theme directory  
 and you can see how it works  

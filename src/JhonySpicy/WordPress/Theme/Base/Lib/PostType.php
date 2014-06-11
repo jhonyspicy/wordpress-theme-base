@@ -3,8 +3,6 @@ namespace Jhonyspicy\Wordpress\Theme\Base\Lib;
 use \Jhonyspicy\Wordpress\Theme\Base\Super as Super;
 
 abstract class PostType extends Super {
-	protected $type = 'post_type';
-
 	/**
 	 * このテーマがサポートするタクソノミー
 	 * 特に「category」や「post_tag」などは
@@ -284,7 +282,7 @@ abstract class PostType extends Super {
 	 * ビジュアルエディタに必要なスタイルを読み込む
 	 */
 	public function admin_head() {
-		$file_path = '/css/admin/' . $this->type . '/'. $this->name() .'/editor.css';
+		$file_path = '/css/admin/' . $this->type() . '/'. $this->name() .'/editor.css';
 		if (is_file(get_template_directory() . $file_path)) {
 			add_editor_style(get_template_directory_uri() . $file_path);
 		}

@@ -3,8 +3,6 @@ namespace Jhonyspicy\Wordpress\Theme\Base\Lib;
 use \Jhonyspicy\Wordpress\Theme\Base\Super as Super;
 
 abstract class Taxonomy extends Super {
-	protected $type = 'taxonomy';
-
 	/**
 	 * タクソノミーのラベルを取得
 	 *

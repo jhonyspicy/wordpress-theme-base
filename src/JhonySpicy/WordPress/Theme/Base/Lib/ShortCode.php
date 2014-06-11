@@ -2,7 +2,7 @@
 namespace Jhonyspicy\Wordpress\Theme\Base\Lib;
 use \Jhonyspicy\Wordpress\Theme\Base\Super as Super;
 
-class ShortCode extends Super {
+abstract class ShortCode extends Super {
 	static public $footerScript = '';
 	static private $wp_footer = false;
 
@@ -15,9 +15,7 @@ class ShortCode extends Super {
 	 *
 	 * @return string
 	 */
-	public function do_shortcode($atts, $content) {
-		return do_shortcode($content);
-	}
+	abstract public function do_shortcode($atts, $content);
 
 	/**
 	 * フッターにスクリプト出力するスクリプトを登録する

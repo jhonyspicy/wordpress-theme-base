@@ -18,21 +18,13 @@ abstract class Super {
 	protected $title;
 
 	/**
-	 * このクラスがどういう種類なのか
-	 * 「post_type」「settings_page」「taxonomy」「」
-	 *
-	 * @var string
-	 */
-	protected $type = '';
-
-	/**
 	 * 自分自身の管理画面なのかどうか
 	 * @return bool
 	 */
 	public function is_self() {
 		$screen = get_current_screen();
 
-		switch($this->type) {
+		switch($this->type()) {
 			case 'post_type':
 				if ($screen->post_type == $this->name()) {
 					return true;
@@ -74,7 +66,22 @@ abstract class Super {
 	 */
 	public function name() {
 		$v = explode('\\', $this->class_name());
-		return strtolower(end($v));
+
+		return strtolower(trim(preg_replace('/([A-Z])/', '-$1', end($v)), '-'));
+	}
+
+	/**
+	 * このクラスがどういう種類なのか
+	 * 「post_type」「settings_page」「taxonomy」
+	 *
+	 * @var string
+	 * @return string
+	 */
+	protected function type() {
+		$classes = class_parents($this);
+		$v = explode('\\', array_shift($classes));
+
+		return strtolower(trim(preg_replace('/([A-Z])/', '_$1', end($v)), '_'));
 	}
 
 	/**
@@ -112,7 +119,7 @@ abstract class Super {
 	 * デフォルトのスクリプトを追加。
 	 */
 	public function admin_print_scripts() {
-		$file_path = '/js/admin/' . $this->type . '/'. $this->name() .'.js';
+		$file_path = '/js/admin/' . $this->type() . '/'. $this->name() .'.js';
 		if (is_file(get_template_directory() . $file_path)) {
 			wp_enqueue_script($this->name() . '_script', get_template_directory_uri() . $file_path, array('jquery'), '1.0.0', true);
 		}
@@ -123,7 +130,7 @@ abstract class Super {
 	 * デフォルトのスタイルを追加。
 	 */
 	public function admin_print_styles() {
-		$file_path = '/css/admin/' . $this->type . '/' . $this->name() . '/style.css';
+		$file_path = '/css/admin/' . $this->type() . '/' . $this->name() . '/style.css';
 		if (is_file(get_template_directory() . '/' . $file_path)) {
 			wp_enqueue_style($this->name() . '_style', get_template_directory_uri() . $file_path, array('jquery'), '1.0.0', true);
 		}

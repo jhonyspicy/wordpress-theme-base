@@ -12,10 +12,6 @@ class CustomPost extends PostType {
 		);
 	}
 
-	public function name() {
-		return 'custom-post';
-	}
-
 	public function meta_box_inner() {
 		$_a = get_post_meta(get_the_ID(), '_a', true);
 		$_b = get_post_meta(get_the_ID(), '_b', true);

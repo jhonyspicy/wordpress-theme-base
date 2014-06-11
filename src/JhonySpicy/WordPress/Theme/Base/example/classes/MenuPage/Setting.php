@@ -42,23 +42,6 @@ class Setting extends MenuPage {
 						<td><input type="text" name="twitter_url" value="<?php echo get_option('twitter_url'); ?>" placeholder="Twitter Page" /></td>
 					</tr>
 					<tr valign="top">
-						<th scope="row"><label for="popular_keyword[]">人気のキーワード</label></th>
-						<td class="check_list">
-							<?php
-							$popular_keyword = (array) get_option('popular_keyword');
-							$keywords = get_terms('keyword');
-							foreach($keywords as $keyword) :
-								?>
-								<label>
-									<input type="checkbox" name="popular_keyword[]" value="<?php echo $keyword->term_id; ?>" <?php echo in_array($keyword->term_id, $popular_keyword) ? 'checked="checked"' : ''; ?>/>
-									<?php echo $keyword->name; ?>
-								</label>
-								<?php
-							endforeach;
-							?>
-						</td>
-					</tr>
-					<tr valign="top">
 						<th scope="row">OGP</th>
 						<td>
 							<input type="text" name="ogp[title]" value="<?php echo $ogp['title']; ?>" placeholder="タイトル" />

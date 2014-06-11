@@ -78,6 +78,7 @@ class Base {
 			foreach(self::$classes['MenuPage'] as $menuPage) {
 				add_action('admin_menu', array($menuPage, 'admin_menu'));
 				add_action('admin_init', array($menuPage, 'admin_init'));
+
 			}
 		}
 
@@ -130,6 +131,62 @@ class Base {
 			foreach(self::$classes['Taxonomy'] as $taxonomy) {
 				$taxonomy->add_special_hooks();
 			}
+		}
+	}
+
+	/**
+	 * ポストタイプのオブジェクトを取得
+	 *
+	 * @param $post_type
+	 * @return null
+	 */
+	static public function get_post_type_object($post_type) {
+		if (array_key_exists('PostType', self::$classes) && array_key_exists($post_type, self::$classes['PostType'])) {
+			return self::$classes['PostType'][$post_type];
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * メニューページのオブジェクトを取得
+	 *
+	 * @param $menu_page
+	 * @return null
+	 */
+	static public function get_menu_page_object($menu_page) {
+		if (array_key_exists('MenuPage', self::$classes) && array_key_exists($menu_page, self::$classes['MenuPage'])) {
+			return self::$classes['MenuPage'][$menu_page];
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * ショートコードのオブジェクトを取得
+	 *
+	 * @param $short_code
+	 * @return null
+	 */
+	static public function get_short_code_object($short_code) {
+		if (array_key_exists('ShortCode', self::$classes) && array_key_exists($short_code, self::$classes['ShortCode'])) {
+			return self::$classes['ShortCode'][$short_code];
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * タクソノミーのオブジェクトを取得
+	 *
+	 * @param $taxonomy
+	 * @return null
+	 */
+	static public function get_Taxonomy_object($taxonomy) {
+		if (array_key_exists('Taxonomy', self::$classes) && array_key_exists($taxonomy, self::$classes['Taxonomy'])) {
+			return self::$classes['Taxonomy'][$taxonomy];
+		} else {
+			return null;
 		}
 	}
 }

@@ -3,8 +3,6 @@ namespace Jhonyspicy\Wordpress\Theme\Base\Lib;
 use \Jhonyspicy\Wordpress\Theme\Base\Super as Super;
 
 abstract class MenuPage extends Super {
-	protected $type = 'menu_page';
-
 	/**
 	 * 画面上に表示される日本語名
 	 *
