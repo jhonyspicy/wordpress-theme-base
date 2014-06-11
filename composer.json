@@ -33,7 +33,7 @@
 	],
 	"extra": {
 		"installer-paths": {
-			"../../content/plugins/{$name}/": ["type:wordpress-plugin"]
+			"../../plugins/{$name}/": ["type:wordpress-plugin"]
 		}
 	}
 }
