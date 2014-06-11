@@ -8,10 +8,7 @@
 	},
 	"description": "This makes easier to make WordPress theme",
 	"autoload": {
-		"classmap": ["src", "src/JhonySpicy/WordPress/Theme/Base/"],
-		"psr-0": {
-			"": "classes/"
-		}
+		"classmap": ["src", "src/JhonySpicy/WordPress/Theme/Base/"]
 	},
 	"author":   {
 		"name": "Jhony Spicy"
