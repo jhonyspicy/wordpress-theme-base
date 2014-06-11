@@ -1,8 +1,9 @@
 Wordpress Theme Base
 =====================
 
-
 ## Get started
+    use Jhonyspicy\Wordpress\Theme\Base\Base as ThemeBase;
+    ThemeBase::initialize();
 
 ## LICENSE
 

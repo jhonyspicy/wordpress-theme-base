@@ -37,12 +37,6 @@ class Theme {
 //		self::register_sidebar(array('name' => '',)); //sidebar-11
 //		self::register_sidebar(array('name' => '',)); //sidebar-12
 //		self::register_sidebar(array('name' => '',)); //sidebar-13
-//		self::register_sidebar(array('name' => '',)); //sidebar-14
-//		self::register_sidebar(array('name' => '',)); //sidebar-15
-//		self::register_sidebar(array('name' => '',)); //sidebar-16
-//		self::register_sidebar(array('name' => '',)); //sidebar-17
-//		self::register_sidebar(array('name' => '',)); //sidebar-18
-//		self::register_sidebar(array('name' => '',)); //sidebar-19
 	}
 
 	/**
@@ -60,5 +54,9 @@ class Theme {
 		$args = wp_parse_args( $args, $defaults );
 
 		register_sidebar($args);
+	}
+
+	static public function add_hooks() {
+		add_action('after_setup_theme', array(__CLASS__, 'after_setup_theme'));
 	}
 }
