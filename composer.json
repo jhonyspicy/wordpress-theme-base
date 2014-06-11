@@ -3,11 +3,18 @@
 	"type": "wordpress-theme",
 	"keywords": ["wordpress", "theme", "template"],
 	"version":  "0.0.0",
+	"repositories": [
+		{
+			"type": "composer",
+			"url": "http://wpackagist.org"
+		}
+	],
 	"require": {
 		"php": ">=5.3.3",
 		"jhonyspicy/wordpress-theme-base": "*",
 		"atomita/wordpress-layout-style-theme": "0.1.*",
 		"atomita/php-utils": "*",
+		"wpackagist-plugin/wp-multibyte-patch": "*",
 		"wpackagist-plugin/force-regenerate-thumbnails": "2.0.*",
 		"atomita/wordpress-thumbnail-filename-changer": "0.1.*"
 	},
