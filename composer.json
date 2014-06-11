@@ -1,6 +1,6 @@
 {
 	"name":     "jhonyspicy/wordpress-theme-base",
-	"keywords": ["wordpress", "theme"],
+	"keywords": ["wordpress", "theme", "base"],
 	"license":  "LGPLv3",
 	"version":  "0.1",
 	"require": {
@@ -8,7 +8,10 @@
 	},
 	"description": "This makes easier to make WordPress theme",
 	"autoload": {
-		"classmap": ["src", "src/JhonySpicy/WordPress/Theme/Base/"]
+		"classmap": ["src", "src/JhonySpicy/WordPress/Theme/Base/"],
+		"psr-0": {
+			"": "classes/"
+		}
 	},
 	"author":   {
 		"name": "Jhony Spicy"
