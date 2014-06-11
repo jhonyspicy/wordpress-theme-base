@@ -6,7 +6,8 @@
 	"require": {
 		"php": ">=5.3.3",
 		"jhonyspicy/wordpress-theme-base": "*",
-		"atomita/wordpress-layout-style-theme": "0.1.*"
+		"atomita/wordpress-layout-style-theme": "0.1.*",
+		"atomita/php-utils": "*"
 	},
 	"description": "This makes easier to make WordPress theme",
 	"autoload": {
