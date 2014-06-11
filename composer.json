@@ -1,16 +1,29 @@
 {
-	"name":     "jhonyspicy/wordpress-theme-base",
-	"keywords": ["wordpress", "theme"],
-	"license":  "LGPLv3",
-	"version":  "0.1",
+	"name": "jhonyspicy/wordpress-theme-base-template",
+	"type": "wordpress-theme",
+	"keywords": ["wordpress", "theme", "template"],
+	"version":  "0.0.0",
 	"require": {
-		"php": ">=5.3.3"
+		"php": ">=5.3.3",
+		"jhonyspicy/wordpress-theme-base": "*",
+		"atomita/wordpress-layout-style-theme": "0.1.*"
 	},
 	"description": "This makes easier to make WordPress theme",
 	"autoload": {
-		"classmap": ["src", "src/JhonySpicy/WordPress/Theme/Base/"]
+		"psr-0": {"": "classes/"}
 	},
-	"author":   {
-		"name": "Jhony Spicy"
+	"authors":[
+		{
+			"name": "Jhony Spicy"
+		},
+		{
+			"name": "atomita",
+			"homepage": "https://atomita.github.io/"
+		}
+	],
+	"extra": {
+		"installer-paths": {
+			"../../content/plugins/{$name}/": ["type:wordpress-plugin"]
+		}
 	}
 }
