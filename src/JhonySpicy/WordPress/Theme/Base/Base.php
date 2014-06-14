@@ -31,15 +31,17 @@ class Base {
 
 				while (false !== ($file = readdir($handle))) {
 					if (is_file(get_stylesheet_directory() . '/classes/' . $dir . '/' . $file)) {
-						if ($dir == 'Widgets') {
-							$className = str_replace('.php', '', $file);
-							self::$classes[$dir][] = '\\' . $dir . '\\' . $className;
-						} else {
-							$className = str_replace('.php', '', $file);
-							$classPath = '\\' . $dir . '\\' . $className;
-							$obj       = new $classPath();
+						$className = str_replace('.php', '', $file);
+						$classPath = '\\' . $dir . '\\' . $className;
 
-							self::$classes[$dir][$className] = $obj;
+						if (class_exists($classPath)) {
+							if ($dir == 'Widgets') {
+								self::$classes[$dir][] = $classPath;
+							} else {
+								$obj = new $classPath();
+
+								self::$classes[$dir][$className] = $obj;
+							}
 						}
 					}
 				}
