@@ -143,11 +143,7 @@ class Base {
 	 * @return null
 	 */
 	static public function get_post_type_object($post_type) {
-		if (array_key_exists('PostType', self::$classes) && array_key_exists($post_type, self::$classes['PostType'])) {
-			return self::$classes['PostType'][$post_type];
-		} else {
-			return null;
-		}
+		return self::get_object('PostType', $post_type);
 	}
 
 	/**
@@ -157,11 +153,7 @@ class Base {
 	 * @return null
 	 */
 	static public function get_menu_page_object($menu_page) {
-		if (array_key_exists('MenuPage', self::$classes) && array_key_exists($menu_page, self::$classes['MenuPage'])) {
-			return self::$classes['MenuPage'][$menu_page];
-		} else {
-			return null;
-		}
+		return self::get_object('MenuPage', $menu_page);
 	}
 
 	/**
@@ -171,11 +163,7 @@ class Base {
 	 * @return null
 	 */
 	static public function get_short_code_object($short_code) {
-		if (array_key_exists('ShortCode', self::$classes) && array_key_exists($short_code, self::$classes['ShortCode'])) {
-			return self::$classes['ShortCode'][$short_code];
-		} else {
-			return null;
-		}
+		return self::get_object('ShortCode', $short_code);
 	}
 
 	/**
@@ -185,8 +173,12 @@ class Base {
 	 * @return null
 	 */
 	static public function get_Taxonomy_object($taxonomy) {
-		if (array_key_exists('Taxonomy', self::$classes) && array_key_exists($taxonomy, self::$classes['Taxonomy'])) {
-			return self::$classes['Taxonomy'][$taxonomy];
+		return self::get_object('Taxonomy', $taxonomy);
+	}
+
+	static public function get_object($dir, $file) {
+		if (array_key_exists($dir, self::$classes) && array_key_exists($file, self::$classes[$dir])) {
+			return self::$classes[$dir][$file];
 		} else {
 			return null;
 		}

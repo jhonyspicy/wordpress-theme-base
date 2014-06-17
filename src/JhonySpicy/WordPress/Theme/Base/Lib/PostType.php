@@ -121,7 +121,8 @@ abstract class PostType extends Super {
 	public function add_hooks() {
 		add_action('edit_form_after_title', array($this, 'edit_form_after_title'));
 		add_action('edit_form_after_editor', array($this, 'edit_form_after_editor'));
-		add_action('save_post', array($this, 'save_post'));
+		add_action('delete_post', array($this, 'delete_post'));
+		add_action('save_post', array($this, 'save_post'), 10, 3);
 		add_action('admin_print_scripts', array($this, 'admin_print_scripts'));
 		add_action('admin_print_styles', array($this, 'admin_print_styles'));
 		add_action('admin_head', array($this, 'admin_head'));
@@ -160,9 +161,22 @@ abstract class PostType extends Super {
 	}
 
 	/**
-	 * カスタムフィールドを保存する
+	 * ゴミ箱からも削除されたら呼ばれる
+	 *
+	 * @param $post_id
 	 */
-	public function save_post($post_id) {
+	public function delete_post($post_id) {
+	}
+
+	/**
+	 * カスタムフィールドを保存する
+	 *
+	 * @param $post_id
+	 * @param $post
+	 * @param $update
+	 * @return mixed
+	 */
+	public function save_post($post_id, $post, $update) {
 		$custom_values = array();
 
 		$nonce_name = $this->nonce_name();
