@@ -24,33 +24,59 @@ class Base {
 	/**
 	 * 初期化
 	 */
-	static public function initialize() {
+	static public function initialize($args = array()) {
+		$args = wp_parse_args($args, array(
+			'classes_dir' => 'classes',
+		));
+
 		foreach (self::$supportDirList as $dir) {
-			$dirPath = get_stylesheet_directory() . '/classes/' . $dir;
-			if (is_dir($dirPath) && $handle = opendir($dirPath)) {
+			//まずは親テーマディレクトリを漁る。
+			if (is_dir($dirPath = get_template_directory() . "/{$args['classes_dir']}/" . $dir)) {
+				self::walkDirectory($dirPath);
+			}
 
-				while (false !== ($file = readdir($handle))) {
-					if (is_file(get_stylesheet_directory() . '/classes/' . $dir . '/' . $file)) {
-						$className = str_replace('.php', '', $file);
-						$classPath = '\\' . $dir . '\\' . $className;
-
-						if (class_exists($classPath)) {
-							if ($dir == 'Widgets') {
-								self::$classes[$dir][] = $classPath;
-							} else {
-								$obj = new $classPath();
-
-								self::$classes[$dir][$className] = $obj;
-							}
-						}
-					}
+			//子テーマがあればで上書きする。
+			if (get_template_directory() != get_stylesheet_directory()) {
+				if (is_dir($dirPath = get_stylesheet_directory() . '/classes/' . $dir)) {
+					self::walkDirectory($dirPath);
 				}
-
-				closedir($handle);
 			}
 		}
 
 		self::add_hooks();
+	}
+
+	static private function walkDirectory($dirPath) {
+		$dir = str_replace(dirname($dirPath), '', $dirPath);
+		$dir = trim($dir, '/');
+
+		if ($handle = opendir($dirPath)) {
+			while (false !== ($file = readdir($handle))) {
+				$file_path = $dirPath . '/' . $file;
+				if (is_file($file_path)) {
+					$className = str_replace('.php', '', $file);
+					$classPath = '\\' . $dir . '\\' . $className;
+
+					require_once($dirPath . '/' . $file);
+
+					if (class_exists($classPath)) {
+						self::set_object($dir, $classPath, $className);
+					}
+				}
+			}
+		}
+
+		closedir($handle);
+	}
+
+	static private function set_object($dir, $classPath, $className) {
+		if ($dir == 'Widgets') {
+			self::$classes[$dir][] = $classPath;
+		} else {
+			$obj = new $classPath();
+
+			self::$classes[$dir][$className] = $obj;
+		}
 	}
 
 	/**

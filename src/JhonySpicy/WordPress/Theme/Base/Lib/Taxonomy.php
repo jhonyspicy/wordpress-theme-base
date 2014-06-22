@@ -46,6 +46,11 @@ abstract class Taxonomy extends Super {
 		add_action($this->name() . '_add_form_fields', array($this, 'add_form_fields'));
 		add_action($this->name() . '_edit_form_fields', array($this, 'edit_form_fields'), 10, 2);
 		add_action('wp_terms_checklist_args', array($this, 'wp_terms_checklist_args'), 10, 2);
+		add_action('delete_term_taxonomy', array($this, 'delete_term_taxonomy'));
+	}
+
+	public function delete_term_taxonomy($tt_id) {
+		$tt_id = $tt_id;
 	}
 
 	/**
