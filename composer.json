@@ -1,5 +1,6 @@
 {
 	"name": "jhonyspicy/wordpress-theme-base-template",
+	"description": "This makes easier to make WordPress theme",
 	"type": "wordpress-theme",
 	"keywords": ["wordpress", "theme", "template"],
 	"version":  "0.0.0",
@@ -12,13 +13,12 @@
 	"require": {
 		"php": ">=5.3.3",
 		"jhonyspicy/wordpress-theme-base": "*",
-		"atomita/wordpress-layout-style-theme": "0.1.*",
+		"atomita/wordpress-layout-style-theme": "0.2.*",
 		"atomita/php-utils": "*",
 		"wpackagist-plugin/wp-multibyte-patch": "*",
 		"wpackagist-plugin/force-regenerate-thumbnails": "2.0.*",
 		"atomita/wordpress-thumbnail-filename-changer": "0.1.*"
 	},
-	"description": "This makes easier to make WordPress theme",
 	"autoload": {
 		"psr-0": {"": "classes/"}
 	},
