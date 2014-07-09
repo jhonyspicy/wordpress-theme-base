@@ -1,6 +1,13 @@
 <?php
 namespace Jhonyspicy\Wordpress\Theme\Base;
-use Jhonyspicy\Wordpress\Theme\Base\Lib\Widgets as Widgets;
+
+use Lib\Widgets;
+use Lib\MenuPage;
+use Lib\PostType;
+use Lib\ShortCode;
+use Lib\Taxonomy;
+
+use \Composer\Autoload\ClassMapGenerator;
 
 class Base {
 	/**
@@ -21,6 +28,14 @@ class Base {
 								   'MenuPage',
 	);
 
+	static private $basedClasses = array(
+		'PostType',
+		'ShortCode',
+		'Taxonomy',
+		'Widgets',
+		'MenuPage',
+	);
+
 	/**
 	 * 初期化
 	 */
@@ -29,44 +44,41 @@ class Base {
 			'classes_dir' => 'classes',
 		));
 
+		$class_maps = array();
+		$base_dir = get_template_directory();
 		foreach (self::$supportDirList as $dir) {
-			//まずは親テーマディレクトリを漁る。
-			if (is_dir($dirPath = get_template_directory() . "/{$args['classes_dir']}/" . $dir)) {
-				self::walkDirectory($dirPath);
+			if (is_dir($dir_path = "{$base_dir}/{$args['classes_dir']}/" . $dir)) {
+				$class_maps[] = ClassMapGenerator::createMap($dir_path);
 			}
+		}
+		if (is_child_theme()){
+			$base_dir = get_stylesheet_directory();
+			foreach (self::$supportDirList as $dir) {
+				if (is_dir($dir_path = "{$base_dir}/{$args['classes_dir']}/" . $dir)) {
+					$class_maps[] = ClassMapGenerator::createMap($dir_path);
+				}
+			}
+		}
 
-			//子テーマがあればで上書きする。
-			if (get_template_directory() != get_stylesheet_directory()) {
-				if (is_dir($dirPath = get_stylesheet_directory() . '/classes/' . $dir)) {
-					self::walkDirectory($dirPath);
+		$class_map = call_user_func_array('array_merge', $class_maps);
+		foreach ($class_map as $clazz => $path){
+			require_once($path);
+
+			if (class_exists($clazz)) {
+				$base = null;
+				foreach(self::$basedClasses as $based_class){
+					if ($clazz instanceof $based_class){
+						$base = $based_class;
+						break;
+					}
+				}
+				if ($base){
+					self::set_object($dir, $clazz, $clazz);
 				}
 			}
 		}
 
 		self::add_hooks();
-	}
-
-	static private function walkDirectory($dirPath) {
-		$dir = str_replace(dirname($dirPath), '', $dirPath);
-		$dir = trim($dir, '/');
-
-		if ($handle = opendir($dirPath)) {
-			while (false !== ($file = readdir($handle))) {
-				$file_path = $dirPath . '/' . $file;
-				if (is_file($file_path)) {
-					$className = str_replace('.php', '', $file);
-					$classPath = '\\' . $dir . '\\' . $className;
-
-					require_once($dirPath . '/' . $file);
-
-					if (class_exists($classPath)) {
-						self::set_object($dir, $classPath, $className);
-					}
-				}
-			}
-		}
-
-		closedir($handle);
 	}
 
 	static private function set_object($dir, $classPath, $className) {

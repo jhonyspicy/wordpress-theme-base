@@ -4,7 +4,8 @@
 	"license":  "LGPLv3",
 	"version":  "0.0.7",
 	"require": {
-		"php": ">=5.3.3"
+		"php": ">=5.3.3",
+		"composer/composer": "1.0.0-alpha8"
 	},
 	"description": "This makes easier to make WordPress theme",
 	"autoload": {
