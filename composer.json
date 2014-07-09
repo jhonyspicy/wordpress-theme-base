@@ -1,12 +1,41 @@
 {
-	"name": "jhonyspicy/wordpress-theme-base",
-	"keywords": ["wordpress", "theme"],
-	"license": "LGPLv3",
-	"version": "0.0.1",
-	"autoload": {
-		"classmap": ["src", "src/"]
+	"name": "jhonyspicy/wordpress-theme-base-template",
+	"description": "This makes easier to make WordPress theme",
+	"type": "wordpress-theme",
+	"keywords": ["wordpress", "theme", "template"],
+	"version":  "0.0.0",
+	"repositories": [
+		{
+			"type": "composer",
+			"url": "http://wpackagist.org"
+		}
+	],
+	"require": {
+		"php": ">=5.3.3",
+		"jhonyspicy/wordpress-theme-base": "*",
+		"atomita/php-utils": "*",
+		"wpackagist-plugin/wp-multibyte-patch": "*",
+		"wpackagist-plugin/force-regenerate-thumbnails": "2.0.*",
+		"atomita/wordpress-thumbnail-filename-changer": "0.1.*",
+		"wpackagist-plugin/timber-library": "*"
 	},
-	"author": {
-		"name" : "	Jhony Spicy"
+	"autoload": {
+		"psr-0": {"": "classes/"},
+		"files": ["vendor/timber-library/timber.php"]
+	},
+	"authors":[
+		{
+			"name": "Jhony Spicy"
+		},
+		{
+			"name": "atomita",
+			"homepage": "https://atomita.github.io/"
+		}
+	],
+	"extra": {
+		"installer-paths": {
+			"vendor/{$name}/": ["wpackagist-plugin/timber-library"],
+			"../../plugins/{$name}/": ["type:wordpress-plugin"]
+		}
 	}
 }
