@@ -17,17 +17,6 @@ class Base {
 	 */
 	static $classes = array();
 
-	/**
-	 * サポート対象のディレクトリ一覧
-	 * @var array
-	 */
-	static $supportDirList = array('PostType',
-								   'ShortCode',
-								   'Taxonomy',
-								   'Widgets',
-								   'MenuPage',
-	);
-
 	static private $basedClasses = array(
 		'PostType',
 		'ShortCode',
@@ -41,20 +30,26 @@ class Base {
 	 */
 	static public function initialize($args = array()) {
 		$args = wp_parse_args($args, array(
-			'classes_dir' => 'classes',
+			'directories' => array(
+				'classes/PostType',
+				'classes/ShortCode',
+				'classes/Taxonomy',
+				'classes/Widgets',
+				'classes/MenuPage',
+			),
 		));
 
 		$class_maps = array();
 		$base_dir = get_template_directory();
-		foreach (self::$supportDirList as $dir) {
-			if (is_dir($dir_path = "{$base_dir}/{$args['classes_dir']}/" . $dir)) {
+		foreach ($args['directories'] as $dir) {
+			if (is_dir($dir_path = "{$base_dir}/{$dir}")) {
 				$class_maps[] = ClassMapGenerator::createMap($dir_path);
 			}
 		}
 		if (is_child_theme()){
 			$base_dir = get_stylesheet_directory();
-			foreach (self::$supportDirList as $dir) {
-				if (is_dir($dir_path = "{$base_dir}/{$args['classes_dir']}/" . $dir)) {
+			foreach ($args['directories'] as $dir) {
+				if (is_dir($dir_path = "{$base_dir}/{$dir}")) {
 					$class_maps[] = ClassMapGenerator::createMap($dir_path);
 				}
 			}
