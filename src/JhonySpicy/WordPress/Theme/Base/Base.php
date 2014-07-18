@@ -82,6 +82,7 @@ class Base {
 
 	static private function parentOf($target, $parent)
 	{
+		$parent = "\\Jhonyspicy\\Wordpress\\Theme\\Base\\Lib\\{$parent}";
 		$parent_class = $target;
 		while ($parent_class = get_parent_class($parent_class)){
 			if ($parent_class == $parent){
