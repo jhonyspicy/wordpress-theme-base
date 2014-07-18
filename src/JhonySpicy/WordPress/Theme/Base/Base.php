@@ -21,7 +21,7 @@ class Base {
 	 * サポート対象のディレクトリ一覧
 	 * @var array
 	 */
-	static private $basedClasses = array(
+	static private $based_classes = array(
 		'PostType',
 		'ShortCode',
 		'Taxonomy',
@@ -29,55 +29,64 @@ class Base {
 		'MenuPage',
 	);
 
+	static private $name_space = 'Jhonyspicy\Wordpress\Theme\Base\Lib\\';
+
 	/**
 	 * 初期化
 	 */
 	static public function initialize($args = array()) {
-		$args = wp_parse_args($args, array(
-			'directories' => array(
-				'classes/PostType',
-				'classes/ShortCode',
-				'classes/Taxonomy',
-				'classes/Widgets',
-				'classes/MenuPage',
-			),
-		));
+		$args = wp_parse_args($args, array('directories' => array('classes/PostType',
+																  'classes/ShortCode',
+																  'classes/Taxonomy',
+																  'classes/Widgets',
+																  'classes/MenuPage',),));
 
 		$class_maps = array();
-		$base_dir = get_template_directory();
+		$base_dir   = get_template_directory();
 		foreach ($args['directories'] as $dir) {
 			if (is_dir($dir_path = "{$base_dir}/{$dir}")) {
 				$class_maps[] = ClassMapGenerator::createMap($dir_path);
 			}
 		}
-		if (is_child_theme()){
+		if (is_child_theme()) {
 			$base_dir = get_stylesheet_directory();
 			foreach ($args['directories'] as $dir) {
 				if (is_dir($dir_path = "{$base_dir}/{$dir}")) {
 					$class_maps[] = ClassMapGenerator::createMap($dir_path);
+				}
 			}
 		}
-	}
 
 		$class_map = call_user_func_array('array_merge', $class_maps);
-		foreach ($class_map as $clazz => $path){
+		foreach ($class_map as $class => $path) {
 			require_once($path);
 
-			if (class_exists($clazz)) {
+			if (class_exists($class)) {
 				$base = null;
-				foreach(self::$basedClasses as $based_class){
-					if ($clazz instanceof $based_class){
+				foreach (self::$based_classes as $based_class) {
+					if (self::parentOf($class, self::$name_space . $based_class)) {
 						$base = $based_class;
 						break;
 					}
 				}
-				if ($base){
-					self::set_object($dir, $clazz, $clazz);
+				if ($base) {
+					self::set_object($based_class, $class, $class);
+				}
 			}
-		}
 		}
 
 		self::add_hooks();
+	}
+
+	static private function parentOf($target, $parent)
+	{
+		$parent_class = $target;
+		while ($parent_class = get_parent_class($parent_class)){
+			if ($parent_class == $parent){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	static private function set_object($dir, $classPath, $className) {
