@@ -66,7 +66,7 @@ class Base {
 			if (class_exists($clazz)) {
 				$base = null;
 				foreach(self::$basedClasses as $based_class){
-					if ($clazz instanceof $based_class){
+					if (self::parentOf($clazz, $based_class)){
 						$base = $based_class;
 						break;
 					}
@@ -78,6 +78,17 @@ class Base {
 		}
 
 		self::add_hooks();
+	}
+
+	static private function parentOf($target, $parent)
+	{
+		$parent_class = $target;
+		while ($parent_class = get_parent_class($parent_class)){
+			if ($parent_class == $parent){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	static private function set_object($dir, $classPath, $className) {
