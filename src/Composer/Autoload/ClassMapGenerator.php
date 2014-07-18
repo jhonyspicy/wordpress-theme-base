@@ -14,7 +14,7 @@
 namespace Composer\Autoload;
 
 use Symfony\Component\Finder\Finder;
-use Composer\IO\IOInterface;
+// not use IO //    use Composer\IO\IOInterface;
 
 /**
  * ClassMapGenerator
@@ -53,7 +53,7 @@ class ClassMapGenerator
      *
      * @throws \RuntimeException When the path is neither an existing file nor directory
      */
-    public static function createMap($path, $whitelist = null, IOInterface $io = null, $namespace = null)
+    public static function createMap($path, $whitelist = null, $io = null, $namespace = null)
     {
         if (is_string($path)) {
             if (is_file($path)) {
@@ -91,11 +91,11 @@ class ClassMapGenerator
 
                 if (!isset($map[$class])) {
                     $map[$class] = $filePath;
-                } elseif ($io && $map[$class] !== $filePath && !preg_match('{/(test|fixture|example)s?/}i', strtr($map[$class].' '.$filePath, '\\', '/'))) {
-                    $io->write(
-                        '<warning>Warning: Ambiguous class resolution, "'.$class.'"'.
-                        ' was found in both "'.$map[$class].'" and "'.$filePath.'", the first will be used.</warning>'
-                    );
+                // } elseif ($io && $map[$class] !== $filePath && !preg_match('{/(test|fixture|example)s?/}i', strtr($map[$class].' '.$filePath, '\\', '/'))) {
+                //     $io->write(
+                //         '<warning>Warning: Ambiguous class resolution, "'.$class.'"'.
+                //         ' was found in both "'.$map[$class].'" and "'.$filePath.'", the first will be used.</warning>'
+                //     );
                 }
             }
         }
