@@ -17,6 +17,10 @@ class Base {
 	 */
 	static $classes = array();
 
+	/**
+	 * サポート対象のディレクトリ一覧
+	 * @var array
+	 */
 	static private $basedClasses = array(
 		'PostType',
 		'ShortCode',
@@ -51,9 +55,9 @@ class Base {
 			foreach ($args['directories'] as $dir) {
 				if (is_dir($dir_path = "{$base_dir}/{$dir}")) {
 					$class_maps[] = ClassMapGenerator::createMap($dir_path);
-				}
 			}
 		}
+	}
 
 		$class_map = call_user_func_array('array_merge', $class_maps);
 		foreach ($class_map as $clazz => $path){
@@ -69,8 +73,8 @@ class Base {
 				}
 				if ($base){
 					self::set_object($dir, $clazz, $clazz);
-				}
 			}
+		}
 		}
 
 		self::add_hooks();
@@ -90,6 +94,8 @@ class Base {
 	 * フックの登録
 	 */
 	static private function add_hooks() {
+		$self = __CLASS__;
+
 		//投稿タイプ
 		if (array_key_exists('PostType', self::$classes)) {
 			foreach(self::$classes['PostType'] as $postType) {
@@ -99,10 +105,10 @@ class Base {
 
 		//ウィジェットの登録
 		if (array_key_exists('Widgets', self::$classes)) {
-			add_action('widgets_init', function () {
+			add_action('widgets_init', function () use ($self) {
 				Widgets::widgets_init();
 
-				foreach(self::$classes['Widgets'] as $widget) {
+				foreach($self::$classes['Widgets'] as $widget) {
 					Widgets::register_widget($widget);
 				}
 			});
@@ -132,29 +138,29 @@ class Base {
 		}
 
 		//管理画面で必要になるフックを登録する
-		add_action('current_screen', function () {
-			if (array_key_exists('PostType', self::$classes)) {
-				foreach(self::$classes['PostType'] as $postType) {
+		add_action('current_screen', function () use ($self) {
+			if (array_key_exists('PostType', $self::$classes)) {
+				foreach($self::$classes['PostType'] as $postType) {
 					if ($postType->is_self()) {
 						$postType->add_hooks();
 					}
 				}
 			}
-			if (array_key_exists('MenuPage', self::$classes)) {
-				foreach(self::$classes['MenuPage'] as $menuPage) {
+			if (array_key_exists('MenuPage', $self::$classes)) {
+				foreach($self::$classes['MenuPage'] as $menuPage) {
 					if ($menuPage->is_self()) {
 						$menuPage->add_hooks();
 					}
 				}
 			}
-			if (array_key_exists('Taxonomy', self::$classes)) {
-				foreach(self::$classes['Taxonomy'] as $taxonomy) {
+			if (array_key_exists('Taxonomy', $self::$classes)) {
+				foreach($self::$classes['Taxonomy'] as $taxonomy) {
 					if ($taxonomy->is_self()) {
 						$taxonomy->add_hooks();
 					}
 				}
 			}
-			if (array_key_exists('Widgets', self::$classes)) {
+			if (array_key_exists('Widgets', $self::$classes)) {
 				if (Widgets::is_self()) {
 					Widgets::add_hooks();
 				}
@@ -162,6 +168,16 @@ class Base {
 		});
 
 		//Ajaxなどの通信でどの画面を出力する予定なのかわからないフック
+		if (array_key_exists('PostType', self::$classes)) {
+			foreach(self::$classes['PostType'] as $postType) {
+				$postType->add_special_hooks();
+			}
+		}
+		if (array_key_exists('MenuPage', self::$classes)) {
+			foreach(self::$classes['MenuPage'] as $menuPage) {
+				$menuPage->add_special_hooks();
+			}
+		}
 		if (array_key_exists('Taxonomy', self::$classes)) {
 			foreach(self::$classes['Taxonomy'] as $taxonomy) {
 				$taxonomy->add_special_hooks();

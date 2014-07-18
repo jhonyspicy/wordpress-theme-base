@@ -43,18 +43,19 @@ abstract class Widgets {
 	}
 
 	/**
-	 * 実際にウィジェットを登録する
+	 * 不要なウィジェットを排除する
 	 */
 	static public function widgets_init() {
 		global $wp_widget_factory;
 		//不要なウィジェットをカット
 		foreach ($wp_widget_factory->widgets as $widget_class => $widget) {
-			if (!in_array($widget_class, array('WP_Widget_Text', 'WP_Nav_Menu_Widget'))) {
-				unregister_widget($widget_class);
-			}
+			unregister_widget($widget_class);
 		}
 	}
 
+	/**
+	 * 実際にウィジェットを登録する
+	 */
 	static public function register_widget($widget) {
 		self::$widgetList[] = $widget;
 

@@ -57,6 +57,13 @@ abstract class PostType extends Super {
 	 * @return array
 	 */
 	protected function get_setting() {
+		//アイコン用の画像があるのかチェック。
+		$file_path = '/images/admin/' . $this->type() . '/'. $this->name() .'/icon.png';
+		$menu_icon = null;
+		if (is_file(get_template_directory() . $file_path)) {
+			$menu_icon = get_template_directory_uri() . $file_path;
+		}
+
 		return array('labels'               => $this->get_label(),
 					 'description'          => '',
 					 'public'               => true,
@@ -68,7 +75,7 @@ abstract class PostType extends Super {
 					 'show_in_nav_menus'    => true,
 					 'show_in_admin_bar'    => null,
 					 'menu_position'        => 5,
-					 'menu_icon'            => null,
+					 'menu_icon'            => $menu_icon,
 					 'capability_type'      => 'post',
 					 'capabilities'         => array(),
 					 'map_meta_cap'         => null,
@@ -115,9 +122,6 @@ abstract class PostType extends Super {
 		}
 	}
 
-	/**
-	 * フックを登録する。
-	 */
 	public function add_hooks() {
 		add_action('edit_form_after_title', array($this, 'edit_form_after_title'));
 		add_action('edit_form_after_editor', array($this, 'edit_form_after_editor'));
@@ -126,6 +130,8 @@ abstract class PostType extends Super {
 		add_action('admin_print_scripts', array($this, 'admin_print_scripts'));
 		add_action('admin_print_styles', array($this, 'admin_print_styles'));
 		add_action('admin_head', array($this, 'admin_head'));
+		add_action('manage_'. $this->name() .'_posts_columns', array($this, 'manage_columns'));
+		add_action('manage_'. $this->name() .'_custom_column', array($this, 'manage_custom_column'), 10, 2);
 
 		if (in_array($this->name(), array('post', 'page'))) {
 			add_action('add_meta_boxes', array($this, 'add_meta_boxes'), 10, 2);
@@ -290,6 +296,31 @@ abstract class PostType extends Super {
 	 */
 	protected function remove_post_type_support($support) {
 		remove_post_type_support($this->name(), $support);
+	}
+
+	/**
+	 * 管理画面にスラッグの項目を追加
+	 *
+	 * @param $columns
+	 *
+	 * @return mixed
+	 */
+	static function manage_columns($columns) {
+//		$columns['slug'] = "スラッグ";
+		return $columns;
+	}
+
+	/**
+	 * 管理画面にスラッグを表示する
+	 *
+	 * @param $column_name
+	 * @param $post_id
+	 */
+	static function manage_custom_column($column_name, $post_id) {
+//		if( $column_name == 'slug' ) {
+//			$post = get_post($post_id);
+//			echo esc_attr($post->post_name);
+//		}
 	}
 
 	/**

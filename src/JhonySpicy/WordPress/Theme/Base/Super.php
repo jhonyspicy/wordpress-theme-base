@@ -90,6 +90,14 @@ abstract class Super {
 	public function add_hooks() {
 	}
 
+	/**
+	 * フック「current_screen」に通らないので、
+	 * 別途特別にフックを登録する必要があるもの。
+	 * フック名にスラッグがつくものが多い。
+	 */
+	public function add_special_hooks() {
+	}
+
 	protected function check_value($input_list) {
 		$result_list = array();
 
@@ -132,7 +140,7 @@ abstract class Super {
 	public function admin_print_styles() {
 		$file_path = '/css/admin/' . $this->type() . '/' . $this->name() . '/style.css';
 		if (is_file(get_template_directory() . '/' . $file_path)) {
-			wp_enqueue_style($this->name() . '_style', get_template_directory_uri() . $file_path, array('jquery'), '1.0.0', true);
+			wp_enqueue_style($this->name() . '_style', get_template_directory_uri() . $file_path, array(), '1.0.0', 'all');
 		}
 	}
 }

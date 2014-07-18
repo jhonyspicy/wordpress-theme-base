@@ -49,19 +49,18 @@ abstract class Taxonomy extends Super {
 		add_action('delete_term_taxonomy', array($this, 'delete_term_taxonomy'));
 	}
 
-	public function delete_term_taxonomy($tt_id) {
-		$tt_id = $tt_id;
-	}
-
-	/**
-	 * フック「current_screen」に通らないので、
-	 * 別途特別にフックを登録する必要があるもの。
-	 * フック名にスラッグがつくものが多い。
-	 */
 	public function add_special_hooks() {
 		add_action('created_' . $this->name(), array($this, 'save'), 10, 2);
 		add_action('edited_' . $this->name(), array($this, 'save'), 10, 2);
 		add_action('delete_' . $this->name(), array($this, 'delete'), 10, 2);
+	}
+
+	/**
+	 * タクソノミーが削除されたら呼ばれる。
+	 *
+	 * @param $tt_id
+	 */
+	public function delete_term_taxonomy($tt_id) {
 	}
 
 	/**
