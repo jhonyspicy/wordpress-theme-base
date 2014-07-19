@@ -132,6 +132,7 @@ abstract class PostType extends Super {
 		add_action('admin_head', array($this, 'admin_head'));
 		add_action('manage_'. $this->name() .'_posts_columns', array($this, 'manage_columns'));
 		add_action('manage_'. $this->name() .'_custom_column', array($this, 'manage_custom_column'), 10, 2);
+		add_action('dbx_post_sidebar', array($this, 'dbx_post_sidebar'));
 
 		if (in_array($this->name(), array('post', 'page'))) {
 			add_action('add_meta_boxes', array($this, 'add_meta_boxes'), 10, 2);
@@ -157,7 +158,6 @@ abstract class PostType extends Super {
 	 * タイトルの下にテキストボックスを出す。
 	 */
 	public function edit_form_after_title() {
-		$this->the_nonce();
 	}
 
 	/**
@@ -258,6 +258,10 @@ abstract class PostType extends Super {
 		return '<input type="hidden" name="'. $this->nonce_name() .'" id="'. $this->nonce_name() .'" value="' . wp_create_nonce($this->title . 'に追加したカスタムフィールド') . '" />';
 	}
 
+	public function dbx_post_sidebar() {
+		$this->the_nonce();
+	}
+
 	/**
 	 * このポストタイプにWordPressの機能を追加する
 	 * 'title'
@@ -305,7 +309,7 @@ abstract class PostType extends Super {
 	 *
 	 * @return mixed
 	 */
-	static function manage_columns($columns) {
+	public function manage_columns($columns) {
 //		$columns['slug'] = "スラッグ";
 		return $columns;
 	}
@@ -316,7 +320,7 @@ abstract class PostType extends Super {
 	 * @param $column_name
 	 * @param $post_id
 	 */
-	static function manage_custom_column($column_name, $post_id) {
+	public function manage_custom_column($column_name, $post_id) {
 //		if( $column_name == 'slug' ) {
 //			$post = get_post($post_id);
 //			echo esc_attr($post->post_name);

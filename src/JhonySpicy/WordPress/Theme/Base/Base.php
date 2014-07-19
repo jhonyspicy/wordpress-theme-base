@@ -29,7 +29,7 @@ class Base {
 		'MenuPage',
 	);
 
-	static private $name_space = 'Jhonyspicy\Wordpress\Theme\Base\Lib\\';
+	static private $name_space = 'Jhonyspicy\\Wordpress\\Theme\\Base\\Lib\\';
 
 	/**
 	 * 初期化
