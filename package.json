@@ -1,0 +1,38 @@
+{
+  "name": "wordpress-theme-base_template-twig",
+  "version": "0.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jhonyspicy/wordpress-theme-base.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jhonyspicy/wordpress-theme-base/issues"
+  },
+  "homepage": "https://github.com/jhonyspicy/wordpress-theme-base",
+  "devDependencies": {
+    "gulp": "^3.8.6",
+    "gulp-autoprefixer": "0.0.8",
+    "gulp-coffee": "^2.1.1",
+    "gulp-coffeelint": "^0.3.3",
+    "gulp-concat": "^2.3.3",
+    "gulp-gzip": "0.0.8",
+    "gulp-imagemin": "^0.6.1",
+    "gulp-jslint": "^0.1.6",
+    "gulp-load-plugins": "^0.5.3",
+    "gulp-minify-css": "^0.3.7",
+    "gulp-newer": "^0.3.0",
+    "gulp-notify": "^1.4.0",
+    "gulp-plumber": "^0.6.4",
+    "gulp-rename": "^1.2.0",
+    "gulp-stylus": "^1.1.0",
+    "gulp-uglify": "^0.3.1",
+    "gulp-watch": "^0.6.8",
+    "imagemin-pngcrush": "^0.1.0"
+  }
+}
