@@ -41,6 +41,7 @@ gulp.task("stylus", function() {
       message: "Error: <%= error.message %>"
     })
   })).pipe(plugins.stylus({
+    "resolve url": true,
     use: [nib()]
   })).pipe(plugins.autoprefixer("last 2 versions", "ie 8")).pipe(gulp.dest("./")).pipe(plugins.minifyCss()).pipe(plugins.rename({
     extname: ".min.css"

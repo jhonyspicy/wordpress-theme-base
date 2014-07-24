@@ -39,6 +39,7 @@ gulp.task "stylus", ->
 			)
 		)
 		.pipe plugins.stylus(
+			"resolve url": true
 			use: [nib()]
 		)
 		.pipe plugins.autoprefixer("last 2 versions", "ie 8")
