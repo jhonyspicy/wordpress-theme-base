@@ -1,10 +1,12 @@
-var gulp, plugins, pngcrush;
+var gulp, nib, plugins, pngcrush;
 
 gulp = require("gulp");
 
 plugins = require("gulp-load-plugins")();
 
 pngcrush = require('imagemin-pngcrush');
+
+nib = require('nib');
 
 gulp.task("default", ["watch", "stylus", "coffee", "image"]);
 
@@ -38,7 +40,9 @@ gulp.task("stylus", function() {
       title: "task: stylus",
       message: "Error: <%= error.message %>"
     })
-  })).pipe(plugins.stylus({})).pipe(plugins.autoprefixer("last 2 versions", "ie 8")).pipe(gulp.dest("./")).pipe(plugins.minifyCss()).pipe(plugins.rename({
+  })).pipe(plugins.stylus({
+    use: [nib()]
+  })).pipe(plugins.autoprefixer("last 2 versions", "ie 8")).pipe(gulp.dest("./")).pipe(plugins.minifyCss()).pipe(plugins.rename({
     extname: ".min.css"
   })).pipe(gulp.dest("./"));
 });
