@@ -201,7 +201,9 @@ class Base {
 	 * @return null
 	 */
 	static public function get_post_type_object($post_type) {
-		return self::get_object('PostType', $post_type);
+		$type = 'PostType';
+
+		return self::get_object($type, $type . '\\' . $post_type);
 	}
 
 	/**
@@ -211,7 +213,9 @@ class Base {
 	 * @return null
 	 */
 	static public function get_menu_page_object($menu_page) {
-		return self::get_object('MenuPage', $menu_page);
+		$type = 'MenuPage';
+
+		return self::get_object($type, $type . '\\' . $menu_page);
 	}
 
 	/**
@@ -221,7 +225,9 @@ class Base {
 	 * @return null
 	 */
 	static public function get_short_code_object($short_code) {
-		return self::get_object('ShortCode', $short_code);
+		$type = 'ShortCode';
+
+		return self::get_object($type, $type . '\\' . $short_code);
 	}
 
 	/**
@@ -231,14 +237,57 @@ class Base {
 	 * @return null
 	 */
 	static public function get_Taxonomy_object($taxonomy) {
-		return self::get_object('Taxonomy', $taxonomy);
+		$type = 'Taxonomy';
+
+		return self::get_object($type, $type . '\\' . $taxonomy);
 	}
 
-	static public function get_object($dir, $file) {
-		if (array_key_exists($dir, self::$classes) && array_key_exists($file, self::$classes[$dir])) {
-			return self::$classes[$dir][$file];
+	/**
+	 * クラス名からオブジェクトを取得
+	 *
+	 * @param $type
+	 * @param $file
+	 *
+	 * @return null
+	 */
+	static public function get_object($type, $file) {
+		if (array_key_exists($type, self::$classes) && array_key_exists($file, self::$classes[$type])) {
+			return self::$classes[$type][$file];
 		} else {
 			return null;
 		}
+	}
+
+	/**
+	 * ポストタイプのオブジェクトを取得
+	 *
+	 * @param $name
+	 *
+	 * @return null
+	 */
+	static public function get_post_type_by_name($name) {
+		$type = 'PostType';
+
+		return self::get_object($type, $name);
+	}
+
+	/**
+	 * スラッグ名(？)からオブジェクトを取得
+	 *
+	 * @param $type
+	 * @param $name
+	 *
+	 * @return null
+	 */
+	static public function get_object_by_name($type, $name) {
+		if (array_key_exists($type, self::$classes)) {
+			foreach(self::$classes[$type] as $post_type) {
+				if ($post_type->name() == $name) {
+					return $post_type;
+				}
+			}
+		}
+
+		return null;
 	}
 }

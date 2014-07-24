@@ -336,4 +336,82 @@ abstract class PostType extends Super {
 			add_editor_style(get_template_directory_uri() . $file_path);
 		}
 	}
+
+	/**
+	 * PostTypeで設定したカスタムフィールドの値を取得
+	 *
+	 * @param null $post_id
+	 *
+	 * @return stdClass
+	 */
+	public function get_custom_fields($post_id = null) {
+		if (is_null($post_id)) {
+			$post_id = get_the_ID();
+		}
+
+		$cf = new \stdClass;
+		$custom_field_names = $this->get_custom_field_names();
+		foreach ($custom_field_names as $name) {
+			$cf->$name = get_post_meta($post_id, $name, true);
+		}
+
+		return $cf;
+	}
+
+	/**
+	 * カスタムフィールドの値を出力する
+	 *
+	 * @param $field_name
+	 * @param null $post_id
+	 */
+	public function the_custom_field($field_name, $post_id = null) {
+		if (is_null($post_id)) {
+			$post_id = get_the_ID();
+		}
+
+		$custom_fields = $this->get_custom_fields($post_id);
+
+		if (property_exists($custom_fields, $field_name)) {
+			echo $custom_fields->$field_name;
+		} else {
+			echo '';
+		}
+	}
+
+	/**
+	 * カスタムフィールド名のリストを取得
+	 *
+	 * @return array
+	 */
+	public function get_custom_field_names() {
+		$result_list = array();
+
+		//入力値をチェックしながら保存する
+		foreach($this->options as $key => $val) {
+			if (is_int($key)) {
+				$result_list[] = $val;
+			} else {
+				$result_list[] = $key;
+			}
+		}
+
+		return $result_list;
+	}
+
+	/**
+	 * エディターで入力された値をコンバートする
+	 *
+	 * @param $name カスタムフィールドの名前
+	 */
+	function convert_custom_field_editor($content) {
+		$content = wptexturize($content);
+		$content = convert_smilies($content);
+		$content = convert_chars($content);
+		$content = wpautop($content);
+		$content = shortcode_unautop($content);
+		$content = prepend_attachment($content);
+		$content = do_shortcode($content);
+
+		return $content;
+	}
 }
