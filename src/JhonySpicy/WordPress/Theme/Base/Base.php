@@ -268,7 +268,7 @@ class Base {
 	static public function get_post_type_by_name($name) {
 		$type = 'PostType';
 
-		return self::get_object($type, $name);
+		return self::get_object_by_name($type, $name);
 	}
 
 	/**
