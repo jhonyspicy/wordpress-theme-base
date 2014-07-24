@@ -303,7 +303,7 @@ abstract class PostType extends Super {
 	}
 
 	/**
-	 * 管理画面にスラッグの項目を追加
+	 * 管理画面の記事一覧にスラッグの項目を追加
 	 *
 	 * @param $columns
 	 *
@@ -315,7 +315,7 @@ abstract class PostType extends Super {
 	}
 
 	/**
-	 * 管理画面にスラッグを表示する
+	 * 管理画面の記事一覧にスラッグを表示する
 	 *
 	 * @param $column_name
 	 * @param $post_id
@@ -340,11 +340,15 @@ abstract class PostType extends Super {
 	/**
 	 * PostTypeで設定したカスタムフィールドの値を取得
 	 *
-	 * @param null $post_id
+	 * @param $args
 	 *
-	 * @return stdClass
+	 * @return \stdClass
 	 */
-	public function get_custom_fields($post_id = null) {
+	public function get_custom_fields($args) {
+		$args = wp_parse_args($args, array('post_id'    => null));
+
+		extract($args);
+
 		if (is_null($post_id)) {
 			$post_id = get_the_ID();
 		}
@@ -364,12 +368,22 @@ abstract class PostType extends Super {
 	 * @param $field_name
 	 * @param null $post_id
 	 */
-	public function the_custom_field($field_name, $post_id = null) {
+	public function the_custom_field($args) {
+		$args = wp_parse_args($args, array('field_name' => null,
+										   'post_id'    => null));
+
+		extract($args);
+
+		if (is_null($field_name)) {
+			echo '';
+			return;
+		}
+
 		if (is_null($post_id)) {
 			$post_id = get_the_ID();
 		}
 
-		$custom_fields = $this->get_custom_fields($post_id);
+		$custom_fields = $this->get_custom_fields($args);
 
 		if (property_exists($custom_fields, $field_name)) {
 			echo $custom_fields->$field_name;
