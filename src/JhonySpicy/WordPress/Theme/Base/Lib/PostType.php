@@ -403,7 +403,7 @@ abstract class PostType extends Super {
 	 *
 	 * @param $name カスタムフィールドの名前
 	 */
-	function convert_custom_field_editor($content) {
+	protected function convert_custom_field_editor($content) {
 		$content = wptexturize($content);
 		$content = convert_smilies($content);
 		$content = convert_chars($content);
