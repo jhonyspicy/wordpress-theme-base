@@ -132,6 +132,7 @@ abstract class PostType extends Super {
 		add_action('admin_head', array($this, 'admin_head'));
 		add_action('manage_'. $this->name() .'_posts_columns', array($this, 'manage_columns'));
 		add_action('manage_'. $this->name() .'_custom_column', array($this, 'manage_custom_column'), 10, 2);
+		add_action('dbx_post_sidebar', array($this, 'dbx_post_sidebar'));
 
 		if (in_array($this->name(), array('post', 'page'))) {
 			add_action('add_meta_boxes', array($this, 'add_meta_boxes'), 10, 2);
@@ -157,7 +158,6 @@ abstract class PostType extends Super {
 	 * タイトルの下にテキストボックスを出す。
 	 */
 	public function edit_form_after_title() {
-		$this->the_nonce();
 	}
 
 	/**
@@ -258,6 +258,10 @@ abstract class PostType extends Super {
 		return '<input type="hidden" name="'. $this->nonce_name() .'" id="'. $this->nonce_name() .'" value="' . wp_create_nonce($this->title . 'に追加したカスタムフィールド') . '" />';
 	}
 
+	public function dbx_post_sidebar() {
+		$this->the_nonce();
+	}
+
 	/**
 	 * このポストタイプにWordPressの機能を追加する
 	 * 'title'
@@ -299,24 +303,24 @@ abstract class PostType extends Super {
 	}
 
 	/**
-	 * 管理画面にスラッグの項目を追加
+	 * 管理画面の記事一覧にスラッグの項目を追加
 	 *
 	 * @param $columns
 	 *
 	 * @return mixed
 	 */
-	static function manage_columns($columns) {
+	public function manage_columns($columns) {
 //		$columns['slug'] = "スラッグ";
 		return $columns;
 	}
 
 	/**
-	 * 管理画面にスラッグを表示する
+	 * 管理画面の記事一覧にスラッグを表示する
 	 *
 	 * @param $column_name
 	 * @param $post_id
 	 */
-	static function manage_custom_column($column_name, $post_id) {
+	public function manage_custom_column($column_name, $post_id) {
 //		if( $column_name == 'slug' ) {
 //			$post = get_post($post_id);
 //			echo esc_attr($post->post_name);
@@ -331,5 +335,97 @@ abstract class PostType extends Super {
 		if (is_file(get_template_directory() . $file_path)) {
 			add_editor_style(get_template_directory_uri() . $file_path);
 		}
+	}
+
+	/**
+	 * PostTypeで設定したカスタムフィールドの値を取得
+	 *
+	 * @param $args
+	 *
+	 * @return \stdClass
+	 */
+	public function get_custom_fields($args) {
+		$args = wp_parse_args($args, array('post_id'    => null));
+
+		extract($args);
+
+		if (is_null($post_id)) {
+			$post_id = get_the_ID();
+		}
+
+		$cf = new \stdClass;
+		$custom_field_names = $this->get_custom_field_names();
+		foreach ($custom_field_names as $name) {
+			$cf->$name = get_post_meta($post_id, $name, true);
+		}
+
+		return $cf;
+	}
+
+	/**
+	 * カスタムフィールドの値を出力する
+	 *
+	 * @param $field_name
+	 * @param null $post_id
+	 */
+	public function the_custom_field($args) {
+		$args = wp_parse_args($args, array('field_name' => null,
+										   'post_id'    => null));
+
+		extract($args);
+
+		if (is_null($field_name)) {
+			echo '';
+			return;
+		}
+
+		if (is_null($post_id)) {
+			$post_id = get_the_ID();
+		}
+
+		$custom_fields = $this->get_custom_fields($args);
+
+		if (property_exists($custom_fields, $field_name)) {
+			echo $custom_fields->$field_name;
+		} else {
+			echo '';
+		}
+	}
+
+	/**
+	 * カスタムフィールド名のリストを取得
+	 *
+	 * @return array
+	 */
+	public function get_custom_field_names() {
+		$result_list = array();
+
+		//入力値をチェックしながら保存する
+		foreach($this->options as $key => $val) {
+			if (is_int($key)) {
+				$result_list[] = $val;
+			} else {
+				$result_list[] = $key;
+			}
+		}
+
+		return $result_list;
+	}
+
+	/**
+	 * エディターで入力された値をコンバートする
+	 *
+	 * @param $name カスタムフィールドの名前
+	 */
+	protected function convert_custom_field_editor($content) {
+		$content = wptexturize($content);
+		$content = convert_smilies($content);
+		$content = convert_chars($content);
+		$content = wpautop($content);
+		$content = shortcode_unautop($content);
+		$content = prepend_attachment($content);
+		$content = do_shortcode($content);
+
+		return $content;
 	}
 }

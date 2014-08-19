@@ -21,7 +21,7 @@ class Base {
 	 * サポート対象のディレクトリ一覧
 	 * @var array
 	 */
-	static private $basedClasses = array(
+	static private $based_classes = array(
 		'PostType',
 		'ShortCode',
 		'Taxonomy',
@@ -29,52 +29,50 @@ class Base {
 		'MenuPage',
 	);
 
+	static private $name_space = 'Jhonyspicy\\Wordpress\\Theme\\Base\\Lib\\';
+
 	/**
 	 * 初期化
 	 */
 	static public function initialize($args = array()) {
-		$args = wp_parse_args($args, array(
-			'directories' => array(
-				'classes/PostType',
-				'classes/ShortCode',
-				'classes/Taxonomy',
-				'classes/Widgets',
-				'classes/MenuPage',
-			),
-		));
+		$args = wp_parse_args($args, array('directories' => array('classes/PostType',
+																  'classes/ShortCode',
+																  'classes/Taxonomy',
+																  'classes/Widgets',
+																  'classes/MenuPage',),));
 
 		$class_maps = array();
-		$base_dir = get_template_directory();
+		$base_dir   = get_template_directory();
 		foreach ($args['directories'] as $dir) {
 			if (is_dir($dir_path = "{$base_dir}/{$dir}")) {
 				$class_maps[] = ClassMapGenerator::createMap($dir_path);
 			}
 		}
-		if (is_child_theme()){
+		if (is_child_theme()) {
 			$base_dir = get_stylesheet_directory();
 			foreach ($args['directories'] as $dir) {
 				if (is_dir($dir_path = "{$base_dir}/{$dir}")) {
 					$class_maps[] = ClassMapGenerator::createMap($dir_path);
+				}
 			}
 		}
-	}
 
 		$class_map = call_user_func_array('array_merge', $class_maps);
-		foreach ($class_map as $clazz => $path){
+		foreach ($class_map as $class => $path) {
 			require_once($path);
 
-			if (class_exists($clazz)) {
+			if (class_exists($class)) {
 				$base = null;
-				foreach(self::$basedClasses as $based_class){
-					if (self::parentOf($clazz, $based_class)){
+				foreach (self::$based_classes as $based_class) {
+					if (self::parentOf($class, self::$name_space . $based_class)) {
 						$base = $based_class;
 						break;
 					}
 				}
-				if ($base){
-					self::set_object($dir, $clazz, $clazz);
+				if ($base) {
+					self::set_object($based_class, $class, $class);
+				}
 			}
-		}
 		}
 
 		self::add_hooks();
@@ -203,7 +201,9 @@ class Base {
 	 * @return null
 	 */
 	static public function get_post_type_object($post_type) {
-		return self::get_object('PostType', $post_type);
+		$type = 'PostType';
+
+		return self::get_object($type, $type . '\\' . $post_type);
 	}
 
 	/**
@@ -213,7 +213,9 @@ class Base {
 	 * @return null
 	 */
 	static public function get_menu_page_object($menu_page) {
-		return self::get_object('MenuPage', $menu_page);
+		$type = 'MenuPage';
+
+		return self::get_object($type, $type . '\\' . $menu_page);
 	}
 
 	/**
@@ -223,7 +225,9 @@ class Base {
 	 * @return null
 	 */
 	static public function get_short_code_object($short_code) {
-		return self::get_object('ShortCode', $short_code);
+		$type = 'ShortCode';
+
+		return self::get_object($type, $type . '\\' . $short_code);
 	}
 
 	/**
@@ -233,14 +237,57 @@ class Base {
 	 * @return null
 	 */
 	static public function get_Taxonomy_object($taxonomy) {
-		return self::get_object('Taxonomy', $taxonomy);
+		$type = 'Taxonomy';
+
+		return self::get_object($type, $type . '\\' . $taxonomy);
 	}
 
-	static public function get_object($dir, $file) {
-		if (array_key_exists($dir, self::$classes) && array_key_exists($file, self::$classes[$dir])) {
-			return self::$classes[$dir][$file];
+	/**
+	 * クラス名からオブジェクトを取得
+	 *
+	 * @param $type
+	 * @param $file
+	 *
+	 * @return null
+	 */
+	static public function get_object($type, $file) {
+		if (array_key_exists($type, self::$classes) && array_key_exists($file, self::$classes[$type])) {
+			return self::$classes[$type][$file];
 		} else {
 			return null;
 		}
+	}
+
+	/**
+	 * ポストタイプのオブジェクトを取得
+	 *
+	 * @param $name
+	 *
+	 * @return null
+	 */
+	static public function get_post_type_by_name($name) {
+		$type = 'PostType';
+
+		return self::get_object_by_name($type, $name);
+	}
+
+	/**
+	 * スラッグ名(？)からオブジェクトを取得
+	 *
+	 * @param $type
+	 * @param $name
+	 *
+	 * @return null
+	 */
+	static public function get_object_by_name($type, $name) {
+		if (array_key_exists($type, self::$classes)) {
+			foreach(self::$classes[$type] as $post_type) {
+				if ($post_type->name() == $name) {
+					return $post_type;
+				}
+			}
+		}
+
+		return null;
 	}
 }
