@@ -1,6 +1,7 @@
 gulp = require("gulp")
 plugins = require("gulp-load-plugins")()
 pngcrush = require('imagemin-pngcrush')
+stylus = require("stylus")
 nib = require('nib')
 
 
@@ -8,14 +9,14 @@ gulp.task "default", ["watch", "stylus", "coffee", "image"]
 
 
 gulp.task "watch", ->
-	gulp.watch(["./images/**/*"], ["image"])
+	gulp.watch(["./images/**/*.{png,jpg,jpeg,gif,svg}", "!./images/**/*.min.{png,jpg,jpeg,gif,svg}", "!./node_modules/**"], ["image"])
 	gulp.watch(["./**/*.styl?(us)", "!./**/_*.styl?(us)", "!./node_modules/**"], ["stylus"])
 	gulp.watch(["./**/*.coffee", "!./node_modules/**", "!./gulpfile.coffee"], ["coffee"])
 	gulp.watch(["./gulpfile.coffee"], ["gulpfile"])
 
 
 gulp.task "image", ->
-	gulp.src(["./images/**/*"])
+	gulp.src(["./images/**/*.{png,jpg,jpeg,gif,svg}", "!./images/**/*.min.{png,jpg,jpeg,gif,svg}", "!./node_modules/**"])
 		.pipe plugins.plumber(
 			errorHandler: plugins.notify.onError(
 				title: "task: image"
@@ -27,6 +28,7 @@ gulp.task "image", ->
 			svgoPlugins: [{removeViewBox: false}]
 			use: [pngcrush()]
 		)
+		.pipe plugins.rename({suffix: ".min"})
 		.pipe gulp.dest("./images/")
 
 
@@ -39,8 +41,10 @@ gulp.task "stylus", ->
 			)
 		)
 		.pipe plugins.stylus(
+			define: {'url': stylus.resolver()}
 			"resolve url": true
 			use: [nib()]
+			import: "nib"
 		)
 		.pipe plugins.autoprefixer("last 2 versions", "ie 8")
 		.pipe gulp.dest("./")
@@ -63,18 +67,4 @@ gulp.task "coffee", ->
 		.pipe gulp.dest("./")
 		.pipe plugins.uglify()
 		.pipe plugins.rename({extname: ".min.js"})
-		.pipe gulp.dest("./")
-
-
-gulp.task "gulpfile", ->
-	gulp.src("./gulpfile.coffee")
-		.pipe plugins.plumber(
-			errorHandler: plugins.notify.onError(
-				title: "task: gulpfile.coffee"
-				message: "Error: <%= error.message %>"
-			)
-		)
-		.pipe plugins.newer({dest:"./", ext:".js"})
-		.pipe plugins.coffeelint()
-		.pipe plugins.coffee({bare: false})
 		.pipe gulp.dest("./")
