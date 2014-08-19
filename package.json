@@ -16,6 +16,7 @@
   },
   "homepage": "https://github.com/jhonyspicy/wordpress-theme-base",
   "devDependencies": {
+    "coffee-script": "*",
     "gulp": "^3.8.6",
     "gulp-autoprefixer": "0.0.8",
     "gulp-coffee": "^2.1.1",
