@@ -331,7 +331,7 @@ abstract class PostType extends Super {
 	 * ビジュアルエディタに必要なスタイルを読み込む
 	 */
 	public function admin_head() {
-		$file_path = '/css/admin/' . $this->type() . '/'. $this->name() .'/editor.css';
+		$file_path = '/styles/admin/' . $this->type() . '/'. $this->name() .'/editor.css';
 		if (is_file(get_template_directory() . $file_path)) {
 			add_editor_style(get_template_directory_uri() . $file_path);
 		}

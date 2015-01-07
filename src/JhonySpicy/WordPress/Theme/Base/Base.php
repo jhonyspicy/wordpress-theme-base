@@ -25,8 +25,8 @@ class Base {
 		'PostType',
 		'ShortCode',
 		'Taxonomy',
-		'Widgets',
 		'MenuPage',
+		'Widgets',
 	);
 
 	static private $name_space = 'Jhonyspicy\\Wordpress\\Theme\\Base\\Lib\\';
@@ -35,75 +35,61 @@ class Base {
 	 * 初期化
 	 */
 	static public function initialize($args = array()) {
-		$args = wp_parse_args($args, array('directories' => array('classes/PostType',
-																  'classes/ShortCode',
-																  'classes/Taxonomy',
-																  'classes/Widgets',
-																  'classes/MenuPage',),));
+		$args = wp_parse_args( $args, array(
+			'PostType'  => 'classes/PostType',
+			'ShortCode' => 'classes/ShortCode',
+			'Taxonomy'  => 'classes/Taxonomy',
+			'MenuPage'  => 'classes/MenuPage',
+			'Widgets'   => 'classes/Widgets',
+		) );
 
 		$class_maps = array();
 		$base_dir   = get_template_directory();
-		foreach ($args['directories'] as $dir) {
+		foreach ($args as $type => $dir) {
 			if (is_dir($dir_path = "{$base_dir}/{$dir}")) {
-				$class_maps[] = ClassMapGenerator::createMap($dir_path);
+				$class_maps[$type] = ClassMapGenerator::createMap($dir_path);
 			}
 		}
 		if (is_child_theme()) {
 			$base_dir = get_stylesheet_directory();
-			foreach ($args['directories'] as $dir) {
+			foreach ($args as $type => $dir) {
 				if (is_dir($dir_path = "{$base_dir}/{$dir}")) {
-					$class_maps[] = ClassMapGenerator::createMap($dir_path);
+					$class_maps[$type] = ClassMapGenerator::createMap($dir_path);
 				}
 			}
 		}
 
-		$class_map = call_user_func_array('array_merge', $class_maps);
-		foreach ($class_map as $class => $path) {
-			require_once($path);
-
-			if (class_exists($class)) {
-				$base = null;
-				foreach (self::$based_classes as $based_class) {
-					if (self::parentOf($class, self::$name_space . $based_class)) {
-						$base = $based_class;
-						break;
-					}
-				}
-				if ($base) {
-					self::set_object($based_class, $class, $class);
-				}
-			}
-		}
-
+		self::set_object($class_maps);
 		self::add_hooks();
 	}
 
-	static private function parentOf($target, $parent)
-	{
-		$parent_class = $target;
-		while ($parent_class = get_parent_class($parent_class)){
-			if ($parent_class == $parent){
-				return true;
+	/**
+	 * ポストタイプを登録する
+	 *
+	 * @param $type
+	 * @param $dir
+	 */
+	private static function set_object($class_maps) {
+		foreach($class_maps as $type => $class_map) {
+			if ($type == 'Widgets') {
+				foreach($class_map as $class => $path) {
+					self::$classes[$type][] = $class;
+				}
+			} else {
+				foreach($class_map as $class => $path) {
+					$obj = new $class();
+					self::$classes[$type][$class] = $obj;
+				}
 			}
-		}
-		return false;
-	}
-
-	static private function set_object($dir, $classPath, $className) {
-		if ($dir == 'Widgets') {
-			self::$classes[$dir][] = $classPath;
-		} else {
-			$obj = new $classPath();
-
-			self::$classes[$dir][$className] = $obj;
 		}
 	}
 
 	/**
 	 * フックの登録
 	 */
-	static private function add_hooks() {
+	private static function add_hooks() {
 		$self = __CLASS__;
+		$widgetsName = self::$name_space . 'Widgets';
 
 		//投稿タイプ
 		if (array_key_exists('PostType', self::$classes)) {
@@ -114,11 +100,11 @@ class Base {
 
 		//ウィジェットの登録
 		if (array_key_exists('Widgets', self::$classes)) {
-			add_action('widgets_init', function () use ($self) {
-				Widgets::widgets_init();
+			add_action('widgets_init', function () use ($self, $widgetsName) {
+				$widgetsName::widgets_init();
 
 				foreach($self::$classes['Widgets'] as $widget) {
-					Widgets::register_widget($widget);
+					$widgetsName::register_widget($widget);
 				}
 			});
 		}
@@ -147,7 +133,7 @@ class Base {
 		}
 
 		//管理画面で必要になるフックを登録する
-		add_action('current_screen', function () use ($self) {
+		add_action('current_screen', function () use ($self, $widgetsName) {
 			if (array_key_exists('PostType', $self::$classes)) {
 				foreach($self::$classes['PostType'] as $postType) {
 					if ($postType->is_self()) {
@@ -170,8 +156,8 @@ class Base {
 				}
 			}
 			if (array_key_exists('Widgets', $self::$classes)) {
-				if (Widgets::is_self()) {
-					Widgets::add_hooks();
+				if ($widgetsName::is_self()) {
+					$widgetsName::add_hooks();
 				}
 			}
 		});

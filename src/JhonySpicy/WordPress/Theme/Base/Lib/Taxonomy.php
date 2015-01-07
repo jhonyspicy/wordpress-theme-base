@@ -45,11 +45,12 @@ abstract class Taxonomy extends Super {
 	public function add_hooks() {
 		add_action($this->name() . '_add_form_fields', array($this, 'add_form_fields'));
 		add_action($this->name() . '_edit_form_fields', array($this, 'edit_form_fields'), 10, 2);
-		add_action('wp_terms_checklist_args', array($this, 'wp_terms_checklist_args'), 10, 2);
+		add_action('admin_print_styles', array($this, 'admin_print_styles'));
 		add_action('delete_term_taxonomy', array($this, 'delete_term_taxonomy'));
 	}
 
 	public function add_special_hooks() {
+		add_action('wp_terms_checklist_args', array($this, 'wp_terms_checklist_args'), 10, 2);
 		add_action('created_' . $this->name(), array($this, 'save'), 10, 2);
 		add_action('edited_' . $this->name(), array($this, 'save'), 10, 2);
 		add_action('delete_' . $this->name(), array($this, 'delete'), 10, 2);

@@ -127,7 +127,7 @@ abstract class Super {
 	 * デフォルトのスクリプトを追加。
 	 */
 	public function admin_print_scripts() {
-		$file_path = '/js/admin/' . $this->type() . '/'. $this->name() .'.js';
+		$file_path = '/scripts/admin/' . $this->type() . '/'. $this->name() .'.js';
 		if (is_file(get_template_directory() . $file_path)) {
 			wp_enqueue_script($this->name() . '_script', get_template_directory_uri() . $file_path, array('jquery'), '1.0.0', true);
 		}
@@ -138,7 +138,7 @@ abstract class Super {
 	 * デフォルトのスタイルを追加。
 	 */
 	public function admin_print_styles() {
-		$file_path = '/css/admin/' . $this->type() . '/' . $this->name() . '/style.css';
+		$file_path = '/styles/admin/' . $this->type() . '/' . $this->name() . '/style.css';
 		if (is_file(get_template_directory() . '/' . $file_path)) {
 			wp_enqueue_style($this->name() . '_style', get_template_directory_uri() . $file_path, array(), '1.0.0', 'all');
 		}
