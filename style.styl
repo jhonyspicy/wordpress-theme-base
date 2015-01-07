@@ -1,0 +1,35 @@
+@import './node_modules/nib/lib/nib'
+
+//リセット
+global-reset()
+reset-html5()
+
+body
+	@import 'styles/header' //共通のヘッダー
+	@import 'styles/footer' //共通の風ったー
+	@import 'styles/pager' //共通のページャー
+	@import 'styles/breadcrumb' //共通のパンくず
+	@import 'styles/widgets' //共通のウィジェット
+	@import 'styles/contents' //共通のコンテンツ
+
+	&.home //トップページ用
+		@import 'styles/header-home'
+		@import 'styles/contents/home'
+
+	&.page
+		@import 'styles/contents/page'
+
+	&.blog //投稿(post)アーカイブ用
+		@import 'styles/contents/blog'
+
+	&.single-post //投稿(post)詳細用
+		@import 'styles/contents/single-post'
+
+	&.single-custom-post //カスタムポストの記事詳細用
+		@import 'styles/contents/single-custom-post'
+
+	&.post-type-archive-custom-post //カスタムポストのアーカイブ用
+		@import 'styles/contents/post-type-archive-custom-post'
+
+
+
