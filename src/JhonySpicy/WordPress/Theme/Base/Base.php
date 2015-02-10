@@ -1,11 +1,11 @@
 <?php
 namespace Jhonyspicy\Wordpress\Theme\Base;
 
-use Lib\Widgets;
-use Lib\MenuPage;
-use Lib\PostType;
-use Lib\ShortCode;
-use Lib\Taxonomy;
+use Jhonyspicy\Wordpress\Theme\Base\Lib\Widgets;
+use Jhonyspicy\Wordpress\Theme\Base\Lib\MenuPage;
+use Jhonyspicy\Wordpress\Theme\Base\Lib\PostType;
+use Jhonyspicy\Wordpress\Theme\Base\Lib\ShortCode;
+use Jhonyspicy\Wordpress\Theme\Base\Lib\Taxonomy;
 
 use \Composer\Autoload\ClassMapGenerator;
 
@@ -25,8 +25,8 @@ class Base {
 		'PostType',
 		'ShortCode',
 		'Taxonomy',
+		'WP_Widget',
 		'MenuPage',
-		'Widgets',
 	);
 
 	static private $name_space = 'Jhonyspicy\\Wordpress\\Theme\\Base\\Lib\\';
@@ -35,61 +35,75 @@ class Base {
 	 * 初期化
 	 */
 	static public function initialize($args = array()) {
-		$args = wp_parse_args( $args, array(
-			'PostType'  => 'classes/PostType',
-			'ShortCode' => 'classes/ShortCode',
-			'Taxonomy'  => 'classes/Taxonomy',
-			'MenuPage'  => 'classes/MenuPage',
-			'Widgets'   => 'classes/Widgets',
-		) );
+		$args = wp_parse_args($args, array('directories' => array('classes/PostType',
+																  'classes/ShortCode',
+																  'classes/Taxonomy',
+																  'classes/Widgets',
+																  'classes/MenuPage',),));
 
 		$class_maps = array();
 		$base_dir   = get_template_directory();
-		foreach ($args as $type => $dir) {
+		foreach ($args['directories'] as $dir) {
 			if (is_dir($dir_path = "{$base_dir}/{$dir}")) {
-				$class_maps[$type] = ClassMapGenerator::createMap($dir_path);
+				$class_maps[] = ClassMapGenerator::createMap($dir_path);
 			}
 		}
 		if (is_child_theme()) {
 			$base_dir = get_stylesheet_directory();
-			foreach ($args as $type => $dir) {
+			foreach ($args['directories'] as $dir) {
 				if (is_dir($dir_path = "{$base_dir}/{$dir}")) {
-					$class_maps[$type] = ClassMapGenerator::createMap($dir_path);
+					$class_maps[] = ClassMapGenerator::createMap($dir_path);
 				}
 			}
 		}
 
-		self::set_object($class_maps);
+		$class_map = call_user_func_array('array_merge', $class_maps);
+		foreach ($class_map as $class => $path) {
+			require_once($path);
+
+			if (class_exists($class)) {
+				$base = null;
+				foreach (self::$based_classes as $based_class) {
+					if (self::parentOf($class, $based_class, self::$name_space)) {
+						$base = $based_class;
+						break;
+					}
+				}
+				if ($base) {
+					self::set_object($based_class, $class, $class);
+				}
+			}
+		}
+
 		self::add_hooks();
 	}
 
-	/**
-	 * ポストタイプを登録する
-	 *
-	 * @param $type
-	 * @param $dir
-	 */
-	private static function set_object($class_maps) {
-		foreach($class_maps as $type => $class_map) {
-			if ($type == 'Widgets') {
-				foreach($class_map as $class => $path) {
-					self::$classes[$type][] = $class;
-				}
-			} else {
-				foreach($class_map as $class => $path) {
-					$obj = new $class();
-					self::$classes[$type][$class] = $obj;
-				}
+	static private function parentOf($target, $parent, $name_space)
+	{
+		$parent_class = $target;
+		while ($parent_class = get_parent_class($parent_class)){
+			if ($parent_class == $parent || $parent_class == $name_space . $parent){
+				return true;
 			}
+		}
+		return false;
+	}
+
+	static private function set_object($dir, $classPath, $className) {
+		if ($dir == 'WP_Widget') {
+			self::$classes[$dir][] = $classPath;
+		} else {
+			$obj = new $classPath();
+
+			self::$classes[$dir][$className] = $obj;
 		}
 	}
 
 	/**
 	 * フックの登録
 	 */
-	private static function add_hooks() {
+	static private function add_hooks() {
 		$self = __CLASS__;
-		$widgetsName = self::$name_space . 'Widgets';
 
 		//投稿タイプ
 		if (array_key_exists('PostType', self::$classes)) {
@@ -99,12 +113,12 @@ class Base {
 		}
 
 		//ウィジェットの登録
-		if (array_key_exists('Widgets', self::$classes)) {
-			add_action('widgets_init', function () use ($self, $widgetsName) {
-				$widgetsName::widgets_init();
+		if (array_key_exists('WP_Widget', self::$classes)) {
+			add_action('widgets_init', function () use ($self) {
+				Widgets::widgets_init();
 
-				foreach($self::$classes['Widgets'] as $widget) {
-					$widgetsName::register_widget($widget);
+				foreach($self::$classes['WP_Widget'] as $widget) {
+					Widgets::register_widget($widget);
 				}
 			});
 		}
@@ -133,7 +147,7 @@ class Base {
 		}
 
 		//管理画面で必要になるフックを登録する
-		add_action('current_screen', function () use ($self, $widgetsName) {
+		add_action('current_screen', function () use ($self) {
 			if (array_key_exists('PostType', $self::$classes)) {
 				foreach($self::$classes['PostType'] as $postType) {
 					if ($postType->is_self()) {
@@ -155,9 +169,9 @@ class Base {
 					}
 				}
 			}
-			if (array_key_exists('Widgets', $self::$classes)) {
-				if ($widgetsName::is_self()) {
-					$widgetsName::add_hooks();
+			if (array_key_exists('WP_Widget', $self::$classes)) {
+				if (Widgets::is_self()) {
+					Widgets::add_hooks();
 				}
 			}
 		});
