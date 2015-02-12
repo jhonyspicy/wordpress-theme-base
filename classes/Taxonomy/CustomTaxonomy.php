@@ -21,9 +21,7 @@ class CustomTaxonomy extends Taxonomy {
 		if ($args['taxonomy'] == $this->name()) {
 			$args['checked_ontop'] = false; //チェックしたのが上に来るかのフラグ
 
-			if ($args['taxonomy'] == $this->name()) {
-				$args['walker'] = new \Walker\Radio();
-			}
+			$args['walker'] = new \Walker\Radio();
 		}
 
 		return $args;
