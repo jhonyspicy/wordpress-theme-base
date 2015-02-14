@@ -31,7 +31,7 @@ abstract class ShortCode extends Super {
 
 		self::$wp_footer = true;
 
-		add_action('wp_footer', array('Jhonyspicy\Wordpress\Theme\Base\Lib\ShortCode', 'wp_footer'));
+		add_action('wp_footer', array('Jhonyspicy\Wordpress\Theme\Base\Lib\ShortCode', 'wp_footer'), 99);
 	}
 
 	/**
