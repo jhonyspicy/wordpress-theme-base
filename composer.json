@@ -1,9 +1,9 @@
 {
-	"name": "jhonyspicy/wordpress-theme-base-template",
+	"name": "jhonyspicy/wordpress-theme-base-template-twig",
 	"description": "This makes easier to make WordPress theme",
 	"type": "wordpress-theme",
 	"keywords": ["wordpress", "theme", "template"],
-	"version":  "0.2.1",
+	"version":  "0.2.3",
 	"repositories": [
 		{
 			"type": "composer",
