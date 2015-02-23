@@ -3,7 +3,6 @@
 	"description": "This makes easier to make WordPress theme",
 	"type": "wordpress-theme",
 	"keywords": ["wordpress", "theme", "template"],
-	"version":  "0.2.3",
 	"repositories": [
 		{
 			"type": "composer",
