@@ -105,14 +105,14 @@ abstract class Super {
 		foreach($this->options as $key => $val) {
 			if (is_int($key)) {
 				$field = $val;
-				$value = $input_list[$val];
+				$value = isset($input_list[$val]) ? $input_list[$val] : '';
 			} else {
 				if (!empty($val) && is_callable($val)) {
 					$field = $key;
-					$value = call_user_func_array($val, array($input_list[$key]));
+					$value = call_user_func_array($val, array(isset($input_list[$key]) ? $input_list[$key] : ''));
 				} else {
 					$field = $key;
-					$value = $input_list[$key];
+					$value = isset($input_list[$key]) ? $input_list[$key] : '';
 				}
 			}
 
